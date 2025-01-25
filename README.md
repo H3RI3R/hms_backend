@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # HotelManagementBackend
+=======
+# HMS Backend
+>>>>>>> hotel/master
 
 
 
@@ -15,14 +19,22 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
+<<<<<<< HEAD
 git remote add origin https://gitlab.com/hotelmanagement2/hotelmanagementbackend.git
+=======
+git remote add origin https://gitlab.com/hotel-management-system7750104/hms-backend.git
+>>>>>>> hotel/master
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
+<<<<<<< HEAD
 - [ ] [Set up project integrations](https://gitlab.com/hotelmanagement2/hotelmanagementbackend/-/settings/integrations)
+=======
+- [ ] [Set up project integrations](https://gitlab.com/hotel-management-system7750104/hms-backend/-/settings/integrations)
+>>>>>>> hotel/master
 
 ## Collaborate with your team
 
