@@ -98,6 +98,7 @@ public class BookingService {
             map.put("totalFare",totalRoomFare);
             map.put("numberOfDays", numberOfDays);
             map.put("roomDetails", roomDetails);
+            map.put("status", "success");
             return ResponseEntity.ok(map);
             //return ResponseClass.responseSuccess("Available room in the hotel","available",availableRooms);
         } catch (Exception e) {
