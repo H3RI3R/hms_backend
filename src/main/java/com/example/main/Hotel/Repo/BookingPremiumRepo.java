@@ -10,8 +10,10 @@ import java.util.List;
 public interface BookingPremiumRepo extends JpaRepository<BookingPremium,Long> {
     List<BookingPremium> findByHotelIdAndBookingNo(String hotelId, String bookingId);
 
-    List<BookingPremium> findAllByHotelId(String hotelId);
 
+    List<BookingPremium> findByHotelId(String hotelId);
+
+    List<BookingPremium> findByBookingId(long bookingId);
 
     BookingPremium findByHotelIdAndBookingId(String hotelId, long bookingId);
 }

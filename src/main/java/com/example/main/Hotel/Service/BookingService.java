@@ -595,7 +595,7 @@ public class BookingService {
 
     public ResponseEntity<?> getAllPremBooking(String token) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        List<BookingPremium> allPremBookings = bookingPremiumRepo.findAllByHotelId(hotelId);
+        List<BookingPremium> allPremBookings = bookingPremiumRepo.findByHotelId(hotelId);
         return ResponseClass.responseSuccess("List of all premium bookings ","allPremBookings", allPremBookings);
     }
 
@@ -613,7 +613,7 @@ public class BookingService {
 
     public ResponseEntity<?> getPremBookingById(String token, long bookingId) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        BookingPremium allPremBookings = bookingPremiumRepo.findByHotelIdAndBookingId(hotelId,bookingId);
+        List<BookingPremium> allPremBookings = bookingPremiumRepo.findByBookingId(bookingId);
         return ResponseClass.responseSuccess("List of all premium bookings ","allPremBookings", allPremBookings);
     }
 
