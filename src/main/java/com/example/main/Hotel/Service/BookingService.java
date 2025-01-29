@@ -83,24 +83,26 @@ public class BookingService {
             double totalRoomFare = roomFarePerDay * totalRoom * numberOfDays;
 
             List<Map<String, Object>> roomDetails = new ArrayList<>();
-            for (int i = 0; i < totalRoom; i++) {
-                Room room = availableRooms.get(i); // Get room from available list
+            for (Room room : availableRooms) {
                 Map<String, Object> roomDetail = new HashMap<>();
-                roomDetail.put("roomNumber", room.getRoomNo());
-                roomDetail.put("numberOfDays", numberOfDays);
+                roomDetail.put("roomId", room.getRoomId());
+                roomDetail.put("roomNo", room.getRoomNo());
+                roomDetail.put("roomType", room.getRoomType());
+                roomDetail.put("status", room.getStatus());
+                roomDetail.put("hotelId", room.getHotelId());
+                roomDetail.put("availableStatus", room.getAvailableStatus());
                 roomDetail.put("farePerDay", roomFarePerDay);
+                roomDetail.put("noOfDays", numberOfDays);
                 roomDetail.put("totalFareRoom", roomFarePerDay * numberOfDays);
                 roomDetails.add(roomDetail);
             }
 
             Map<String,Object>  map = new HashMap<>();
-            map.put("available",availableRooms);
+            map.put("available",roomDetails);
             map.put("totalFare",totalRoomFare);
             map.put("numberOfDays", numberOfDays);
-            map.put("roomDetails", roomDetails);
             map.put("status", "success");
             return ResponseEntity.ok(map);
-            //return ResponseClass.responseSuccess("Available room in the hotel","available",availableRooms);
         } catch (Exception e) {
             return ResponseClass.internalServer("something went wrong");
         }
@@ -108,7 +110,7 @@ public class BookingService {
 
 
 
-    public ResponseEntity<?> roomBook(String token, String bookingType,List<Integer> roomNumbers, LocalDateTime checkInDate, LocalDateTime checkOutDate, String guestName, String phone, String email, int adult, int children, String address, Double totalPaid) {
+    public ResponseEntity<?> roomBook(String token, String bookingType,List<Integer> roomNumbers, LocalDateTime checkInDate, LocalDateTime checkOutDate, String guestName, String phone, String email, Integer adult, Integer children, String address, Double totalPaid) {
         String hotelId =  configClass.tokenValue(token,"hotelId");
         String roleType = configClass.tokenValue(token, "roleType"); // Extracting ActionBy from token
         Hotel hotels = hotelRepo.findByStHotelId(hotelId);
@@ -168,8 +170,14 @@ public class BookingService {
         booking.setBookingType(bookingType);
         booking.setCheckInDate(checkInDate);
         booking.setCheckOutDate(checkOutDate);
-        booking.setAdults(adult);
-        booking.setChildren(children);
+        if(adult!=null)
+        {
+            booking.setAdults(adult);
+        }
+        if(children!=null)
+        {
+            booking.setChildren(children);
+        }
         booking.setBookingStatus(true);
         booking.setHotelId(hotelId);
 
@@ -401,7 +409,7 @@ public class BookingService {
             return ResponseClass.responseFailure("Room not available");
         }
 
-        System.out.println(booking.getBookingNo());
+//        System.out.println(booking.getBookingNo());
         for (PremiumDTO premiumDTO : premiumServiceList) {
             BookingPremium bookingPremium = new BookingPremium();
             bookingPremium.setBookingNo(booking.getBookingNo());

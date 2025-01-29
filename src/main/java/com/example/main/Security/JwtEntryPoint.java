@@ -21,7 +21,7 @@ public class JwtEntryPoint  implements AuthenticationEntryPoint {
         public void commence(HttpServletRequest request, HttpServletResponse response,
                              AuthenticationException authException) throws AccessDeniedException, IOException, ServletException, java.io.IOException {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            System.out.println("entryPoint exception");
+//            System.out.println("entryPoint exception");
             PrintWriter out = response.getWriter();
             out.println("Access Denied !! "+authException.getMessage());
 

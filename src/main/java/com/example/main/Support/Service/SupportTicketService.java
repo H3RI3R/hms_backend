@@ -128,13 +128,12 @@ public class SupportTicketService {
     public ResponseEntity<?> getAllTickets(String hotelId, Integer page, Integer size) {
         // Define the cache key
         String cacheKey = "hotelId:" + hotelId;
-        System.out.println(hotelId);
         // Try to retrieve the data from Redis cache
         //List<SupportTicketDTO> supportTicketDTOS = (List<SupportTicketDTO>) cacheService.getFromHashCache(SupportTicketCacheKey, cacheKey);
 
         List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdOrderByAssignedAtDesc(hotelId);
 //        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelId(hotelId);
-        System.out.println(supportTickets.size() + " supportTickets");
+//        System.out.println(supportTickets.size() + " supportTickets");
         // Check if no tickets are found
         if (supportTickets.isEmpty()) {
             return ResponseClass.responseFailure("No tickets found");

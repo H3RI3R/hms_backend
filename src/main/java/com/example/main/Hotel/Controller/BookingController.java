@@ -39,8 +39,8 @@ public class BookingController {
                                                     @RequestParam(required = false) String guestName,
                                                     @RequestParam(required = false) String phone,
                                                     @RequestParam String email,
-                                                    @RequestParam(required = false) int adult,
-                                                    @RequestParam(required = false) int children,
+                                                    @RequestParam(required = false) Integer adult,
+                                                    @RequestParam(required = false) Integer children,
                                                     @RequestParam(required = false) String address,
                                                     @RequestParam(required = false) Double totalPaid
     ) {

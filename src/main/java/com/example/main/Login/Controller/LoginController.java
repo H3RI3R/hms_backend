@@ -63,8 +63,8 @@ public class LoginController {
             @RequestParam("password") String password) throws BadRequestException {
         String email = configClass.tokenValue(token, "email");
         HashMap<String, String> resp = new HashMap<>();
-        System.out.println("Request Received: " +email);
-        System.out.println("password is received: ");
+//        System.out.println("Request Received: " +email);
+//        System.out.println("password is received: ");
         boolean verified = loginService.updatePassword(password, email);
 
         if(verified){

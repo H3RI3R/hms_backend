@@ -130,7 +130,7 @@ public class StaffService {
 
     public ResponseEntity<?> banStaff(String hotelId, Long id) {
         Staff staff = staffRepo.findByIdAndHotelId(id, hotelId);
-        System.out.println(staff.getEmail());
+//        System.out.println(staff.getEmail());
         LoginModel login = loginRepo.findByEmail(staff.getEmail());
         if(login==null){
             LoginModel userLogin =  new LoginModel();

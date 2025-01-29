@@ -228,7 +228,7 @@ public class ConfigClass {
     public String getOtpSetUser(String email, String schoolId, String subject, String body, int otp, String roleType, String uniqueId) {
         try {
             List<Otp> old = otpRepo.findAllByEmail(email);
-            System.out.println("test this because it can cause an error");
+//            System.out.println("test this because it can cause an error");
             otpRepo.deleteAll(old);
             System.out.println("old OTP deleted");
         } catch (Exception e) {
