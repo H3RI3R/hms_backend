@@ -55,7 +55,7 @@ public class StaffService {
         login.setRole("STAFF");
         login.setUserName(staff1.getUserName());
         login.setHotelId(hotelId);
-        login.setPassword(passwordEncoder.encode(staff1.getPassword()));
+//        login.setPassword(passwordEncoder.encode(staff1.getPassword()));
         loginRepo.save(login);
         return ResponseClass.responseSuccess("new staff created");
     }

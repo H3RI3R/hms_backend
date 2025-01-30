@@ -9,7 +9,7 @@ public class StaffDTO {
     private String email;
     private String roleName;
     private String status;
-    private String password;
+//    private String password;
     private Long roleId;
     private String address;
 }
