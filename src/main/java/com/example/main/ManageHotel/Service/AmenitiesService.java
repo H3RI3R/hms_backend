@@ -109,6 +109,7 @@ public class AmenitiesService {
 
 
     public ResponseEntity<?> getAllAmenities(String token) {
+
         String hotelId = config.tokenValue(token, "hotelId");
         String cacheKey = "hotelId:" + hotelId;  // Unique key for caching by hotel ID
         List<Amenities> amenities = amenitiesRepo.findByHotelId(hotelId);
@@ -122,7 +123,8 @@ public class AmenitiesService {
 //            }
 //        }
 
-        return ResponseClass.responseSuccess("Amenities retrieved successfully", "Amenities", amenities);
+//        return ResponseClass.responseSuccess("Amenities retrieved successfully", "Amenities", amenities);
+        return (ResponseEntity<?>) ResponseEntity.internalServerError();
     }
 
     @CacheEvict(value = AMENITIES_CACHE_KEY, key = "'hotelId:' + #hotelId")

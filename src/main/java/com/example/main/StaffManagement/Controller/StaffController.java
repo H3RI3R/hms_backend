@@ -75,7 +75,7 @@ public class StaffController {
         return staffService.deleteStaff(hotelId, Id);
     }
 
-    @PatchMapping("/staffBanStatus/{Id}")
+    @PutMapping("/staffBanStatus/{Id}")
     public ResponseEntity<?> banStaff(
             @RequestHeader("Authorization") String token,
             @PathVariable Long Id){

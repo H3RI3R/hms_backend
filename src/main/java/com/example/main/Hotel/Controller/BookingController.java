@@ -2,6 +2,7 @@ package com.example.main.Hotel.Controller;
 
 import com.example.main.Hotel.DTO.PremiumDTO;
 import com.example.main.Hotel.Service.BookingService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -70,8 +71,12 @@ public class BookingController {
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<?> getAll(@RequestHeader("Authorization") String token) {
-        return bookingService.getAllBookings(token);
+    public ResponseEntity<?> getAll(@RequestHeader("Authorization") String token,
+                                    @RequestParam(required = false) LocalDate startDate,
+                                    @RequestParam(required = false) LocalDate endDate
+
+    ) {
+        return bookingService.getAllBookings(token,startDate,endDate);
     }
 
     @GetMapping("/getAllAvRoom")
@@ -91,8 +96,12 @@ public class BookingController {
     }
 
     @GetMapping("/activeBookings")
-    public ResponseEntity<?> getActiveBookings(@RequestHeader("Authorization") String token) {
-        return bookingService.getActiveBookings(token);
+    public ResponseEntity<?> getActiveBookings(@RequestHeader("Authorization") String token,
+                                               @RequestParam(required = false) LocalDate startDate,
+                                               @RequestParam(required = false) LocalDate endDate
+
+                                               ) {
+        return bookingService.getActiveBookings(token,startDate,endDate);
     }
 
     @GetMapping("/checkoutBookings")
@@ -126,8 +135,13 @@ public class BookingController {
     }
 
     @GetMapping("/getDelayedCheckOut")
-    public ResponseEntity<?> getDelayedCheckOut(@RequestHeader("Authorization") String token) {
-        return bookingService.getDelayedCheckOut(token);
+    public ResponseEntity<?> getDelayedCheckOut(@RequestHeader("Authorization") String token,
+                                                @RequestParam(required = false) LocalDate startDate,
+                                                @RequestParam(required = false) LocalDate endDate
+
+    ) {
+
+        return bookingService.getDelayedCheckOut(token,startDate,endDate);
     }
 
 
@@ -176,18 +190,30 @@ public class BookingController {
 //    }
 
     @GetMapping("/getCancelBooking")
-    public ResponseEntity<?> getCancelBooking(@RequestHeader("Authorization") String token) {
-        return bookingService.getCancelBooking(token);
+    public ResponseEntity<?> getCancelBooking(@RequestHeader("Authorization") String token,
+                                              @RequestParam(required = false) LocalDate startDate,
+                                              @RequestParam(required = false) LocalDate endDate
+
+    ) {
+        return bookingService.getCancelBooking(token,startDate,endDate);
     }
 
     @GetMapping("/getAllCheckout")
-    public ResponseEntity<?> getAllCheckout(@RequestHeader("Authorization") String token) {
-        return bookingService.getAllCheckOut(token);
+    public ResponseEntity<?> getAllCheckout(@RequestHeader("Authorization") String token,
+                                            @RequestParam(required = false) LocalDate startDate,
+                                            @RequestParam(required = false) LocalDate endDate
+
+    ) {
+        return bookingService.getAllCheckOut(token,startDate,endDate);
     }
 
     @GetMapping("/getAllRefundable")
-    public ResponseEntity<?> getAllRefundable(@RequestHeader("Authorization") String token) {
-        return bookingService.getAllRefundable(token);
+    public ResponseEntity<?> getAllRefundable(@RequestHeader("Authorization") String token,
+                                              @RequestParam(required = false) LocalDate startDate,
+                                              @RequestParam(required = false) LocalDate endDate
+
+    ) {
+        return bookingService.getAllRefundable(token,startDate,endDate);
     }
 
     @GetMapping("/getTodayCheckOut")

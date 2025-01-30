@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -341,27 +342,6 @@ public class BookingService {
     }
 
 
-    public ResponseEntity<?> getActiveBookings(String token) {
-        String hotelId = configClass.tokenValue(token, "hotelId");
-
-        List<Booking> activeBookings = bookingRepo.findByHotelIdAndBookingStatus(hotelId, true);
-        return ResponseClass.responseSuccess("All Active Booking","active",activeBookings);
-//        List<Map<String, Object>> activeBookingDetails = new ArrayList<>();
-//        for (Booking booking : activeBookings) {
-//            Map<String, Object> activeBookingDetail = new HashMap<>();
-//            activeBookingDetail.put("guestName", booking.getGuestName());
-//            activeBookingDetail.put("roomNumbers", booking.getRoomNo());
-//            activeBookingDetail.put("checkInDate", booking.getCheckInDate());
-//            activeBookingDetail.put("checkOutDate", booking.getCheckOutDate());
-//            activeBookingDetails.add(activeBookingDetail);
-//        }
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("totalActiveBookings", activeBookings.size());
-//        response.put("activeBookings", activeBookingDetails);
-//
-//        return ResponseEntity.ok(response);
-    }
 
 
     public ResponseEntity<?> getCheckoutBookings(String token) {
@@ -390,10 +370,20 @@ public class BookingService {
     }
 
 
-    public ResponseEntity<?> getAllBookings(String token) {
+    public ResponseEntity<?> getAllBookings(String token, LocalDate startDate,LocalDate endDate) {
         String hotelId = configClass.tokenValue(token, "hotelId");
 
         List<Booking> allBookings = bookingRepo.findByHotelId(hotelId);
+        if(startDate!=null&&endDate!=null)
+        {
+            allBookings = allBookings.stream()
+                    .filter(b -> {
+                        LocalDate checkInDate = b.getCheckInDate().toLocalDate();  // Extract date only
+                        LocalDate checkOutDate = b.getCheckOutDate().toLocalDate(); // Extract date only
+                        return !checkInDate.isBefore(startDate) && !checkOutDate.isAfter(endDate);
+                    })
+                    .collect(Collectors.toList());
+        }
         return ResponseClass.responseSuccess("All Booking ","bookings", allBookings);
     }
 
@@ -449,9 +439,20 @@ public class BookingService {
         return ResponseClass.responseSuccess("Booking deleted successfully");
     }
 
-    public ResponseEntity<?> getDelayedCheckOut(String token) {
+    public ResponseEntity<?> getDelayedCheckOut(String token, LocalDate startDate, LocalDate endDate) {
         String hotelId = configClass.tokenValue(token, "hotelId");
         List<Booking> delayedBookings = bookingRepo.findByHotelIdAndBookingStatusAndCheckOutDateBefore(hotelId, false,LocalDateTime.now());
+        if(startDate!=null&&endDate!=null)
+        {
+            delayedBookings = delayedBookings.stream()
+                    .filter(b -> {
+                        LocalDate checkInDate = b.getCheckInDate().toLocalDate();  // Extract date only
+                        LocalDate checkOutDate = b.getCheckOutDate().toLocalDate(); // Extract date only
+                        return !checkInDate.isBefore(startDate) && !checkOutDate.isAfter(endDate);
+                    })
+                    .collect(Collectors.toList());
+        }
+
         return ResponseClass.responseSuccess("List of delayedBookings ","delayedCheckOut",delayedBookings);
     }
 
@@ -518,9 +519,20 @@ public class BookingService {
 //        return ResponseClass.responseSuccess("Booking cancelled successfully");
 //    }
 
-    public ResponseEntity<?> getCancelBooking(String token) {
+    public ResponseEntity<?> getCancelBooking(String token, LocalDate startDate, LocalDate endDate) {
         String hotelId = configClass.tokenValue(token, "hotelId");
         List<Booking> cancelBookings = bookingRepo.findByHotelIdAndBookingCancel(hotelId, true);
+        if(startDate!=null&&endDate!=null)
+        {
+            cancelBookings = cancelBookings.stream()
+                    .filter(b -> {
+                        LocalDate checkInDate = b.getCheckInDate().toLocalDate();  // Extract date only
+                        LocalDate checkOutDate = b.getCheckOutDate().toLocalDate(); // Extract date only
+                        return !checkInDate.isBefore(startDate) && !checkOutDate.isAfter(endDate);
+                    })
+                    .collect(Collectors.toList());
+        }
+
         return ResponseClass.responseSuccess("List of canceled bookings ","cancelBookings", cancelBookings);
     }
 
@@ -574,15 +586,35 @@ public class BookingService {
         return ResponseClass.responseSuccess("Booking details retrieved successfully", "booking", bookingDetails);
     }
 
-    public ResponseEntity<?> getAllCheckOut(String token) {
+    public ResponseEntity<?> getAllCheckOut(String token, LocalDate startDate, LocalDate endDate) {
         String hotelId = configClass.tokenValue(token, "hotelId");
         List<Booking> allCheckOut = bookingRepo.findByHotelIdAndBookingStatus(hotelId, false);
+        if(startDate!=null&&endDate!=null)
+        {
+            allCheckOut = allCheckOut.stream()
+                    .filter(b -> {
+                        LocalDate checkInDate = b.getCheckInDate().toLocalDate();  // Extract date only
+                        LocalDate checkOutDate = b.getCheckOutDate().toLocalDate(); // Extract date only
+                        return !checkInDate.isBefore(startDate) && !checkOutDate.isAfter(endDate);
+                    })
+                    .collect(Collectors.toList());
+        }
         return ResponseClass.responseSuccess("List of all check-out bookings ","allCheckOut", allCheckOut);
     }
 
-    public ResponseEntity<?> getAllRefundable(String token) {
+    public ResponseEntity<?> getAllRefundable(String token, LocalDate startDate, LocalDate endDate) {
         String hotelId = configClass.tokenValue(token, "hotelId");
         List<Booking> allRefundable = bookingRepo.findByHotelIdAndRefundable(hotelId, true);
+        if(startDate!=null&&endDate!=null)
+        {
+            allRefundable = allRefundable.stream()
+                    .filter(b -> {
+                        LocalDate checkInDate = b.getCheckInDate().toLocalDate();  // Extract date only
+                        LocalDate checkOutDate = b.getCheckOutDate().toLocalDate(); // Extract date only
+                        return !checkInDate.isBefore(startDate) && !checkOutDate.isAfter(endDate);
+                    })
+                    .collect(Collectors.toList());
+        }
         return ResponseClass.responseSuccess("List of all refundable bookings ","allRefundable", allRefundable);
     }
 
@@ -649,4 +681,21 @@ public class BookingService {
     }
 
 
+    public ResponseEntity<?> getActiveBookings(String token, LocalDate startDate, LocalDate endDate) {
+
+        String hotelId = configClass.tokenValue(token, "hotelId");
+
+        List<Booking> activeBookings = bookingRepo.findByHotelIdAndBookingStatus(hotelId, true);
+        if(startDate!=null&&endDate!=null)
+        {
+            activeBookings = activeBookings.stream()
+                    .filter(b -> {
+                        LocalDate checkInDate = b.getCheckInDate().toLocalDate();  // Extract date only
+                        LocalDate checkOutDate = b.getCheckOutDate().toLocalDate(); // Extract date only
+                        return !checkInDate.isBefore(startDate) && !checkOutDate.isAfter(endDate);
+                    })
+                    .collect(Collectors.toList());
+        }
+        return ResponseClass.responseSuccess("All Active Booking","active",activeBookings);
+    }
 }
