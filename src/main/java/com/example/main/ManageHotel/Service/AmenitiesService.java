@@ -113,18 +113,9 @@ public class AmenitiesService {
         String hotelId = config.tokenValue(token, "hotelId");
         String cacheKey = "hotelId:" + hotelId;  // Unique key for caching by hotel ID
         List<Amenities> amenities = amenitiesRepo.findByHotelId(hotelId);
-        // Attempt to retrieve from cache
-//        List<Amenities> amenitiesList = (List<Amenities>) cacheService.getFromHashCache(AMENITIES_CACHE_KEY, cacheKey);
 
-//        if (amenitiesList == null) {
-//            amenitiesList = amenitiesRepo.findByHotelId(hotelId);
-//            if (amenitiesList != null && !amenitiesList.isEmpty()) {
-//                cacheService.putInHashCache(AMENITIES_CACHE_KEY, cacheKey, amenitiesList);
-//            }
-//        }
+        return ResponseClass.responseSuccess("Amenities retrieved successfully", "Amenities", amenities);
 
-//        return ResponseClass.responseSuccess("Amenities retrieved successfully", "Amenities", amenities);
-        return (ResponseEntity<?>) ResponseEntity.internalServerError();
     }
 
     @CacheEvict(value = AMENITIES_CACHE_KEY, key = "'hotelId:' + #hotelId")
