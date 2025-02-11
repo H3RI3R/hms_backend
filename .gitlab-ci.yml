@@ -8,6 +8,9 @@ image: openjdk:17-slim
 variables:
   JAR_NAME: "jarhotel.jar"  # Define the JAR file name
 
+before_script:
+  - apt-get update && apt-get install -y maven sshpass  # Install Maven and sshpass inside the container
+
 build:
   stage: build
   script:
