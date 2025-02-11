@@ -1,19 +1,36 @@
 stages:
+  - build
   - deploy
+
+# Define the image to use for building the JAR (OpenJDK with Maven)
+image: maven:3.8.6-openjdk-17-slim
+
+variables:
+  JAR_NAME: "jarhotel.jar"  # Define the JAR file name
+
+build:
+  stage: build
+  script:
+    # Step 1: Clone the repo and build the JAR file using Maven
+    - git clone https://gitlab.com/hotel-management-system7750104/hms-backend.git
+    - cd repository  # Go into the cloned repo
+    - mvn clean package -DskipTests  # Build the JAR file
+    
+    # Step 2: Ensure the JAR is created (you can adjust the path)
+    - ls target  # Check the target folder to confirm the JAR is created
+
+    # Step 3: Move the JAR file directly to /mnt/vol1/
+    - mv target/*.jar /mnt/vol1/$JAR_NAME  # Move JAR to /mnt/vol1/
 
 deploy:
   stage: deploy
-  image: openjdk:17-slim  # Use OpenJDK 17 image for deployment
-
   script:
-    # Step 1: Install sshpass (if not available in the image)
-    - apt-get update && apt-get install -y sshpass  
+    # Step 1: Install sshpass (for SSH password management)
+    - apt-get update && apt-get install -y sshpass
 
-    # Step 2: Copy the JAR file to /mnt/vol1 on the server using SCP
-    - sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no target/jarhotel.jar root@89.116.122.211:/mnt/vol1/jarhotel.jar
-
-    # Step 3: SSH into the server and run the JAR file
+    # Step 2: SSH into the server and run the JAR file from /mnt/vol1/
     - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@89.116.122.211 "
-        nohup java -jar /mnt/vol1/jarhotel.jar > /mnt/vol1/app.log 2>&1 & 
-        echo 'Application started successfully in /mnt/vol1!' 
+        nohup java -jar /mnt/vol1/$JAR_NAME > /mnt/vol1/app.log 2>&1 &
+        echo 'Application started successfully in /mnt/vol1!'
       "
+
