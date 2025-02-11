@@ -1,18 +1,4 @@
-stages:
-  - deploy
-
 deploy:
-  image: ubuntu:latest
   stage: deploy
-  only:
-    - master
-  before_script:
-    - apt-get update && apt-get install -y openssh-client
-    - install -m 600 -D /dev/null ~/.ssh/id_rsa
-    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
-    - mkdir -p ~/.ssh
-    - ssh-keyscan -H 89.116.122.211 >> ~/.ssh/known_hosts
   script:
-    - ssh root@89.116.122.211 "cd $WORK_DIR && git checkout $MAIN_BRANCH && git pull && exit"
-  after_script:
-    - rm -rf ~/.ssh
+    - sshpass -p "$SERVER_PASSWORD" ssh root@89.116.122.211 
