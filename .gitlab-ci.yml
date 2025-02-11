@@ -1,33 +1,38 @@
 stages:
   - build
   - deploy
-
-# Use a Docker image that contains the required JDK
-image: openjdk:17-slim
+  - run
 
 variables:
-  JAR_NAME: "HMSystem-0.0.1-SNAPSHOT.jar"  # Keep the JAR name as it is created
+  JAR_NAME: "HMSystem-0.0.1-SNAPSHOT.jar"  # Modify as needed
 
 before_script:
-  - apt-get update && apt-get install -y maven sshpass  # Install Maven and sshpass inside the container
+  - echo "Starting the build process"
 
 build:
   stage: build
   script:
-    # Step 1: Clean and build the JAR file
-    - mvn clean package -DskipTests  # Build the JAR file
-
-    # Step 2: Check if the target directory exists
-    - if [ ! -d "/mnt/vol1" ]; then mkdir -p /mnt/vol1; fi  # Ensure /mnt/vol1 exists
-
-    # Step 3: Move the JAR file to /mnt/vol1/
-    - mv target/$JAR_NAME /mnt/vol1/  # Move the JAR to /mnt/vol1/
+    # Ensure the working directory is set correctly
+    - cd /builds/$CI_PROJECT_PATH/
+    
+    # Clean and build the project, skipping tests
+    - mvn clean package -DskipTests
+    
+    # Verify the JAR file exists in the target directory
+    - if [ -f target/*.jar ]; then echo "JAR file found"; else echo "JAR file not found"; exit 1; fi
 
 deploy:
   stage: deploy
   script:
-    # Step 4: SSH into the server and run the JAR file
-    - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@89.116.122.211 "
-        nohup java -jar /mnt/vol1/$JAR_NAME > /mnt/vol1/app.log 2>&1 &
-        echo 'Application started successfully in /mnt/vol1!'
-      "
+    # Move the generated JAR file to /mnt/vol1/
+    - mv target/*.jar /mnt/vol1/
+
+    # Verify the JAR file is in /mnt/vol1/
+    - ls -l /mnt/vol1/
+    
+run:
+  stage: run
+  script:
+    # Run the JAR file
+    - java -jar /mnt/vol1/$JAR_NAME
+
