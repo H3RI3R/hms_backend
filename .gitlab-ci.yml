@@ -4,33 +4,29 @@ stages:
   - run
 
 variables:
-  JAR_NAME: "HMSystem-0.0.1-SNAPSHOT.jar"  # Modify as needed
+  JAR_NAME: "HMSystem-0.0.1-SNAPSHOT.jar"
 
 before_script:
-  - apt-get update && apt-get install -y maven sshpass  # Install Maven and sshpass inside the container
+  - apt-get update && apt-get install -y maven sshpass
 
 build:
   stage: build
   script:
-    # Step 1: Clean and build the JAR file
-    # Clean and build the project, skipping tests
     - mvn clean package -DskipTests
-    
-    # Verify the JAR file exists in the target directory
-    - if [ -f target/*.jar ]; then echo "JAR file found"; else echo "JAR file not found"; exit 1; fi
+    - if [ -f target/$JAR_NAME ]; then echo "JAR file found"; else echo "JAR file not found"; exit 1; fi
+  artifacts:
+    paths:
+      - target/$JAR_NAME  # Preserve the JAR file for the next stage
+    expire_in: 30m  # Store for 30 minutes (adjust as needed)
 
 deploy:
   stage: deploy
   script:
-    # Move the generated JAR file to /mnt/vol1/
-    - mv target/*.jar /mnt/vol1/
-
-    # Verify the JAR file is in /mnt/vol1/
+    - ls -l target/  # Debugging step to check if the JAR file exists
+    - mv target/$JAR_NAME /mnt/vol1/
     - ls -l /mnt/vol1/
-    
+
 run:
   stage: run
   script:
-    # Run the JAR file
     - java -jar /mnt/vol1/$JAR_NAME
-
