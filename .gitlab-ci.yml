@@ -1,6 +1,30 @@
+stages:
+  - build
+  - deploy
+
+# Use OpenJDK 17 image (you can skip Maven installation since Maven is already installed on the server)
+image: openjdk:17-slim
+
+build:
+  stage: build
+  script:
+    # Step 1: Build the JAR file (since Maven is already installed)
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar  # Save the JAR file for use in the next deploy stage
+
 deploy:
   stage: deploy
-  image: debian:latest  # Use Debian to support package installation
   script:
-    - apt-get update && apt-get install -y sshpass  # Install sshpass
-    - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@89.116.122.211 "echo 'Server connection successful!'"
+    # Step 2: Install sshpass (if not available in the image)
+    - apt-get update && apt-get install -y sshpass  
+
+    # Step 3: Copy the JAR file to /mnt/vol1 on the server using SCP
+    - sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no target/*.jar root@89.116.122.211:/mnt/vol1/$JAR_NAME
+
+    # Step 4: SSH into the server and run the JAR file
+    - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@89.116.122.211 "
+        nohup java -jar /mnt/vol1/$JAR_NAME > /mnt/vol1/app.log 2>&1 & 
+        echo 'Application started successfully in /mnt/vol1!' 
+      "
