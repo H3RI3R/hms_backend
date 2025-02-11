@@ -231,6 +231,7 @@ public class BookingService {
 
         PaymentClass paymentClass = new PaymentClass();
         paymentClass.setBookingId(booking.getBookingId());
+        paymentClass.setHotelId(hotelId);
         paymentClass.setBookingNo(bookingNo);
         paymentClass.setTotalAmount(totalAmount);
         paymentClass.setTotalPaid(totalPaid);
