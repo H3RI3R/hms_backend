@@ -1,4 +1,6 @@
 deploy:
   stage: deploy
+  image: debian:latest  # Use Debian to support package installation
   script:
-    - sshpass -p "$SERVER_PASSWORD" ssh root@89.116.122.211 
+    - apt-get update && apt-get install -y sshpass  # Install sshpass
+    - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@89.116.122.211 "echo 'Server connection successful!'"
