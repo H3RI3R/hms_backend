@@ -31,7 +31,11 @@ public class PaymentController {
     public ResponseEntity<?> getBookingDetails(@RequestHeader("Authorization") String token,@PathVariable long bookingId) {
         return paymentService.getBookingDetails(token,bookingId);
     }
-
+    @GetMapping("/getPaymentDetailsByPaymentId/{paymentId}")
+    public ResponseEntity<?> getPaymentDetailsByPaymentId(@RequestHeader("Authorization") String token ,
+                                                          @PathVariable Long paymentId){
+        return paymentService.getPaymentDetailsByPaymentId(token, paymentId);
+    }
     // All  Payments
     @GetMapping("/getAllPaymentByHotelId")
     public ResponseEntity<Map<String, Object>> getPaymentsByHotel(@RequestHeader("Authorization") String token) {

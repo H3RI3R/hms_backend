@@ -131,4 +131,21 @@ public class PaymentService {
 
         return ResponseClass.responseSuccess("Payment status updated successfully", "updatedPayment", payment);
     }
+
+    public ResponseEntity<?> getPaymentDetailsByPaymentId(String token, Long paymentId) {
+        String hotelId = configClass.tokenValue(token, "hotelId");
+        Optional<PaymentClass> paymentOptional = paymentRepo.findById(paymentId);
+
+        if (paymentOptional.isEmpty()) {
+            return ResponseClass.responseFailure("Payment not found with ID: " + paymentId);
+        }
+        PaymentClass payment = paymentOptional.get();
+
+        // Ensure the payment belongs to the hotel making the request
+        if (!payment.getHotelId().equals(hotelId)) {
+            return ResponseClass.responseFailure("Unauthorized: Payment does not belong to your hotel.");
+        }
+
+        return ResponseClass.responseSuccess("User found successfully", "UserPayment", payment);
+    }
 }
