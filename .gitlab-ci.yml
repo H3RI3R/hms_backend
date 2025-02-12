@@ -17,6 +17,9 @@ clone:
   stage: clone
   script:
     - echo "Cloning repository..." # Ensure the directory exists
+    - ls -l /mnt/vol1/
+    - ls -l /mnt/vol1/HMS  # Check if the directory is accessible
+    - mkdir -p /mnt/vol1/HMS
     - cd /mnt/vol1/HMS  # Change to your desired clone path
     - sshpass -p "$GIT_PASSWORD" git clone https://$GIT_USERNAME:$GIT_PASSWORD@$GIT_REPO  # Correct URL
 
