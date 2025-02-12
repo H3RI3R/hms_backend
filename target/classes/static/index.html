@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<button onclick="connectWebSocket()">Connect to WebSocket</button>
+<div id="notifications"></div>
+
+<script>
+    function connectWebSocket() {
+        // Create a new WebSocket connection
+        const socket = new WebSocket('ws://localhost:5001/ws/notifications');
+
+        // When the WebSocket is opened, display a message
+        socket.onopen = function(event) {
+            alert('WebSocket connection established.');
+        };
+
+        // When a message is received from the server
+        socket.onmessage = function(event) {
+            alert('New Notification: ' + event.data);
+            document.getElementById('notifications').innerHTML += '<p>' + event.data + '</p>';
+        };
+
+        // When the WebSocket is closed
+        socket.onclose = function(event) {
+            alert('WebSocket connection closed.');
+        };
+
+        // When there is an error with the WebSocket
+        socket.onerror = function(event) {
+            alert('WebSocket error: ' + event);
+        };
+    }
+</script>
+</body>
+</html>
