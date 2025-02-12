@@ -16,8 +16,7 @@ before_script:
 clone:
   stage: clone
   script:
-    - echo "Cloning repository..."
-    # - mkdir -p /mnt/vol1/HMS  # Ensure the directory exists
+    - echo "Cloning repository..." # Ensure the directory exists
     - cd /mnt/vol1/HMS  # Change to your desired clone path
     - sshpass -p "$GIT_PASSWORD" git clone https://$GIT_USERNAME:$GIT_PASSWORD@$GIT_REPO  # Correct URL
 
@@ -35,11 +34,12 @@ build:
 deploy:
   stage: deploy
   script:
-    - echo "JAR Name: $JAR_NAME"
-    - ls -l /mnt/vol1/HMS/hms-backend/target/
-    - if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
-    - mv /mnt/vol1/HMS/hms-backend/target/$JAR_NAME /mnt/vol1/$JAR_NAME
-    - ls -l /mnt/vol1/
+    - |
+      echo "JAR Name: $JAR_NAME"
+      ls -l /mnt/vol1/HMS/hms-backend/target/
+      if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
+      mv /mnt/vol1/HMS/hms-backend/target/$JAR_NAME /mnt/vol1/$JAR_NAME
+      ls -l /mnt/vol1/
 
 run:
   stage: run
