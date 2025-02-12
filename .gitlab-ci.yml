@@ -1,18 +1,44 @@
 stages:
+  - build
   - deploy
+  - run
+
+variables:
+  JAR_NAME: "HMSystem-0.0.1-SNAPSHOT.jar"
+
+before_script:
+  - apt-get update && apt-get install -y maven sshpass
+
+build:
+  stage: build
+  script:
+    - mvn clean package -DskipTests
+    - if [ -f target/$JAR_NAME ]; then echo "JAR file found"; else echo "JAR file not found"; exit 1; fi
+  artifacts:
+    paths:
+      - target/$JAR_NAME  # Preserve the JAR file for the next stage
+    expire_in: 30m  # Store for 30 minutes (adjust as needed)
 
 deploy:
-  image: ubuntu:latest
   stage: deploy
-  only:
-    - master
-  before_script:
-    - apt-get update && apt-get install -y openssh-client
-    - install -m 600 -D /dev/null ~/.ssh/id_rsa
-    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
-    - mkdir -p ~/.ssh
-    - ssh-keyscan -H 89.116.122.211 >> ~/.ssh/known_hosts
   script:
-    - ssh root@89.116.122.211 "cd $WORK_DIR && git checkout $MAIN_BRANCH && git pull && exit"
-  after_script:
-    - rm -rf ~/.ssh
+    # Debugging: Show JAR name
+    - echo "JAR Name: $JAR_NAME"
+
+    # Debugging: Check if target JAR file exists
+    - ls -l target/
+    
+    # Debugging: Check if /mnt/vol1 is a valid directory
+    - if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
+    
+    # Move JAR file to /mnt/vol1/
+    - mv target/$JAR_NAME /mnt/vol1/$JAR_NAME
+    
+    # Debugging: Verify JAR file in /mnt/vol1/
+    - ls -l /mnt/vol1/
+
+
+run:
+  stage: run
+  script:
+    - java -jar /mnt/vol1/$JAR_NAME
