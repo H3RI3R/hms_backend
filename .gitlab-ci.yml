@@ -33,21 +33,11 @@ build:
 deploy:
   stage: deploy
   script:
-    # Debugging: Show JAR name
     - echo "JAR Name: $JAR_NAME"
-
-    # Debugging: Check if target JAR file exists
     - ls -l hms-backend/target/
-    
-    # Debugging: Check if /mnt/vol1 is a valid directory
     - if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
-    
-    # Move JAR file to /mnt/vol1/
     - mv hms-backend/target/$JAR_NAME /mnt/vol1/$JAR_NAME
-    
-    # Debugging: Verify JAR file in /mnt/vol1/
     - ls -l /mnt/vol1/
-
 
 run:
   stage: run
