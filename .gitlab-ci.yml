@@ -23,7 +23,8 @@ clone:
 build:
   stage: build
   script:
-    - cd /mnt/vol1/HMS/hms-backend  # Change into the cloned repository folder
+    - cd /mnt/vol1/HMS/hms-backend 
+    - mkdir -p /mnt/vol1/HMS # Change into the cloned repository folder
     - mvn clean package -DskipTests
     - if [ -f target/$JAR_NAME ]; then echo "JAR file found"; else echo "JAR file not found"; exit 1; fi
   artifacts:
