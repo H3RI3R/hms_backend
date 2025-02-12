@@ -33,11 +33,12 @@ build:
 deploy:
   stage: deploy
   script:
-    - echo "JAR Name: $JAR_NAME"
-    - ls -l hms-backend/target/
-    - if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
-    - mv hms-backend/target/$JAR_NAME /mnt/vol1/$JAR_NAME
-    - ls -l /mnt/vol1/
+    - |
+      echo "JAR Name: $JAR_NAME"
+      ls -l hms-backend/target/
+      if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
+      mv hms-backend/target/$JAR_NAME /mnt/vol1/$JAR_NAME
+      ls -l /mnt/vol1/
 
 run:
   stage: run
