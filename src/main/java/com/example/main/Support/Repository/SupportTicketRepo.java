@@ -13,7 +13,7 @@ public interface SupportTicketRepo extends JpaRepository<SupportTicket, Long>{
     SupportTicket findByTicketNumber(String ticketNo);
 
     List<SupportTicket> findByHotelIdOrderByAssignedAtDesc(String hotelId);
-
+List<SupportTicket> findByHotelIdAndUserEmail(String hotelId ,String userEmail);
     List<SupportTicket> findByHotelIdAndStatus(String hotelId, TicketStatus name);
 
     List<SupportTicket> findByHotelId(String hotelId);
