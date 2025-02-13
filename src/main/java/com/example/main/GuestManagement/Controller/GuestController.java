@@ -76,10 +76,12 @@ public class GuestController {
 
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllGuest(
-            @RequestHeader("Authorization") String token){
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return guestService.getAllGuest(hotelId);
+        return guestService.getAllGuest(hotelId, email);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteGuest(
@@ -92,33 +94,37 @@ public class GuestController {
 
     @GetMapping("/active")
     public ResponseEntity<?> getAllActiveGuest(
-            @RequestHeader("Authorization") String token){
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return guestService.getAllActiveGuest(hotelId);
+        return guestService.getAllActiveGuest(hotelId, email);
     }
 
 
     @GetMapping("/banned")
     public ResponseEntity<?> getAllBannedGuest(
-            @RequestHeader("Authorization") String token){
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return guestService.getAllBannedGuests(hotelId);
+        return guestService.getAllBannedGuests(hotelId, email);
     }
 
 
     @GetMapping("/emailUnverified")
     public ResponseEntity<?> getAllEmailUnverified(
-            @RequestHeader("Authorization") String token){
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return guestService.getAllEmailUnverifiedGuests(hotelId);
+        return guestService.getAllEmailUnverifiedGuests(hotelId, email);
     }
 
 
     @GetMapping("/phoneUnverified")
     public ResponseEntity<?> getAllPhoneUnverified(
-            @RequestHeader("Authorization") String token){
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return guestService.getAllPhoneUnverifiedGuests(hotelId);
+        return guestService.getAllPhoneUnverifiedGuests(hotelId, email);
     }
 
     @GetMapping("/banGuest/{id}")
