@@ -5,6 +5,7 @@ com/example/main/Login/DTO/LoginDTO.class
 com/example/main/Searching/Repo/SearchingModal.class
 com/example/main/Hotel/Entity/Notification.class
 com/example/main/StaffManagement/DTO/CreateRoleDTO.class
+com/example/main/Searching/Service/SearchingService$GuestDTORecord.class
 com/example/main/Searching/Controller/SearchingController.class
 com/example/main/ManageHotel/Controller/AmenitiesController.class
 com/example/main/Hotel/Entity/Booking.class

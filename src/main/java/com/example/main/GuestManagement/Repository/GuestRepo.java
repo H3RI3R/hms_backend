@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Repository
 public interface GuestRepo extends JpaRepository<Guest, Long> {
+    List<Guest> findByHotelIdAndEmail(String hotelId, String email);
 
     @Query(value = "select * from guest where id =:id and is_deleted = false and hotel_id =:hotelId", nativeQuery = true)
     Guest findByIdAndHotelId(Long id, String hotelId);
