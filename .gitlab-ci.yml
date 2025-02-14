@@ -1,51 +1,56 @@
 stages:
-  - clone
   - build
+  - package
   - deploy
-  - run
 
 variables:
-  JAR_NAME: "HMSystem-0.0.1-SNAPSHOT.jar"
-  GIT_REPO: "gitlab.com/hotel-management-system7750104/hms-backend.git"  # Removed 'https://'
-  GIT_USERNAME: "girjesh1"
-  GIT_PASSWORD: "$CI_JOB_TOKEN"  # or you can use a CI secret variable for password
+# MAVEN_CLI_OPTS: "-s settings.xml --batch-mode"
+# JAVA_HOME: "/usr/lib/jvm/java-17-openjdk"
 
 before_script:
-  - apt-get update && apt-get install -y maven sshpass git
-
-clone:
-  stage: clone
-  script:
-    - echo "Cloning repository..." # Ensure the directory exists
-    - ls -l /mnt/vol1/
-    - ls -l /mnt/vol1/HMS  # Check if the directory is accessible
-    - mkdir -p /mnt/vol1/HMS
-    - cd /mnt/vol1/HMS  # Change to your desired clone path
-    - sshpass -p "$GIT_PASSWORD" git clone https://$GIT_USERNAME:$GIT_PASSWORD@$GIT_REPO  # Correct URL
+  - echo "Starting pipeline..."
+  # - export JAVA_HOME=/usr/lib/jvm/java-17-corretto
+  # - export PATH=$JAVA_HOME/bin:$PATH
+  - java -version
+  - mvn --version
 
 build:
   stage: build
+  image: maven:3.9.9-amazoncorretto-17
   script:
-    - cd /mnt/vol1/HMS/hms-backend 
-    - mkdir -p /mnt/vol1/HMS # Change into the cloned repository folder
-    - mvn clean package -DskipTests
-    - if [ -f target/$JAR_NAME ]; then echo "JAR file found"; else echo "JAR file not found"; exit 1; fi
+    - mvn clean compile
   artifacts:
     paths:
-      - /mnt/vol1/HMS/hms-backend/target/$JAR_NAME  # Preserve the JAR file for the next stage
-    expire_in: 30m  # Store for 30 minutes (adjust as needed)
+      - target/
+
+package:
+  stage: package
+  image: maven:3.9.9-amazoncorretto-17
+  script:
+    - mvn package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
 
 deploy:
   stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client rsync
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H 89.116.122.211 >> ~/.ssh/known_hosts
   script:
-    - |
-      echo "JAR Name: $JAR_NAME"
-      ls -l /mnt/vol1/HMS/hms-backend/target/
-      if [ -d "/mnt/vol1" ]; then echo "/mnt/vol1 exists and is a directory"; else echo "/mnt/vol1 is missing or is a file"; exit 1; fi
-      mv /mnt/vol1/HMS/hms-backend/target/$JAR_NAME /mnt/vol1/$JAR_NAME
-      ls -l /mnt/vol1/
-
-run:
-  stage: run
-  script:
-    - java -jar /mnt/vol1/$JAR_NAME
+    - mv target/*.jar target/hms.jar
+    - scp -i ~/.ssh/id_rsa target/*.jar root@89.116.122.211:/mnt/vol1/HMS/
+    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "chown gitlab-runner:gitlab-runner /mnt/vol1/HMS/hms.jar"
+    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ls -ltr /mnt/vol1/HMS/"
+    # Start the new erp.jar
+  #    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "nohup java -jar /mnt/vol1/IdCardBackend/idCard.jar > /mnt/vol1/IdCardBackend/idCard.log 2>&1 &"
+  #    # Verify that the new erp.jar is running
+  #    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ps aux | grep '[e]rp.jar'"
+  only:
+    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
