@@ -50,7 +50,7 @@ deploy:
   #    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "nohup java -jar /mnt/vol1/IdCardBackend/idCard.jar > /mnt/vol1/IdCardBackend/idCard.log 2>&1 &"
   #    # Verify that the new erp.jar is running
   #    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ps aux | grep '[e]rp.jar'"
-  only:
-    - master
+  # only:
+  #   - master
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
