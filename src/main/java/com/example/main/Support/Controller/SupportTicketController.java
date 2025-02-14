@@ -93,12 +93,13 @@ public class SupportTicketController {
     public ResponseEntity<?> getAllTickets(
             @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size
+            @RequestParam(required = false) Integer size,
+            @RequestParam(value = "search" , required = false) String email
     ) {
         String hotelId = configClass.tokenValue(token, "hotelId");
         String roleType = configClass.tokenValue(token, "roleType");
         System.out.println(roleType);
-        return supportTicketService.getAllTickets(hotelId, page, size);
+        return supportTicketService.getAllTickets(hotelId, page, size , email);
     }
 
 

@@ -51,12 +51,17 @@ public class StaffController {
         return staffService.getOneStaff(hotelId, Id);
     }
 
-
     @GetMapping("/getAll")
-    public ResponseEntity<?> getAllRole(
-            @RequestHeader("Authorization") String token){
+    public ResponseEntity<?> getAllStaff(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email) {
+
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return staffService.getAllStaff(hotelId);
+        if (email != null && !email.isEmpty()) {
+            return staffService.searchStaffByEmail(hotelId, email);
+        } else {
+            return staffService.getAllStaff(hotelId);
+        }
     }
 
     @GetMapping("/getBannedGuest")

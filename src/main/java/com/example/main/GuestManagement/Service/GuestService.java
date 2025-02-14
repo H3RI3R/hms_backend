@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -52,9 +53,18 @@ public class GuestService {
         return ResponseClass.responseSuccess("guest information", "guest", guestDto);
     }
 
-    public ResponseEntity<?> getAllGuest(String hotelId) {
-        List<Guest> guestList = guestRepo.findAllByHotelId(hotelId);
-        if (guestList.isEmpty()) {return ResponseClass.responseFailure("records not found");}
+    public ResponseEntity<?> getAllGuest(String hotelId, String email) {
+        List<Guest> guestList;
+        if (email != null && !email.isEmpty()) {
+            guestList = guestRepo.findByHotelIdAndEmail(hotelId, email);
+        } else {
+            guestList = guestRepo.findAllByHotelId(hotelId);
+        }
+
+        if (guestList.isEmpty()) {
+            return ResponseClass.responseFailure("records not found");
+        }
+
         List<GuestDTORecord> guestDtoList = guestList.stream().map(GuestDTORecord::new).toList();
         return ResponseClass.responseSuccess("guest information", "guest", guestDtoList);
     }
@@ -86,29 +96,74 @@ public class GuestService {
         return ResponseClass.responseSuccess("guest created", "guest", guest);
     }
 
-    public ResponseEntity<?> getAllActiveGuest(String hotelId) {
-        List<Guest> guestList = guestRepo.findAllByActiveHotelId(hotelId);
-        if (guestList.isEmpty()) {return ResponseClass.responseSuccess("notFound"); }
+    public ResponseEntity<?> getAllActiveGuest(String hotelId, String email) {
+        List<Guest> guestList;
+        if (email != null && !email.isEmpty()) {
+            guestList = guestRepo.findByHotelIdAndEmail(hotelId, email).stream()
+                    .filter(Guest::getIsActive)
+                    .collect(Collectors.toList());
+        } else {
+            guestList = guestRepo.findAllByActiveHotelId(hotelId);
+        }
+
+        if (guestList.isEmpty()) {
+            return ResponseClass.responseFailure("records not found");
+        }
+
         List<GuestDTORecord> guestDtoList = guestList.stream().map(GuestDTORecord::new).toList();
         return ResponseClass.responseSuccess("guest information", "guest", guestDtoList);
     }
 
-    public ResponseEntity<?> getAllBannedGuests(String hotelId) {
-        List<Guest> guestList = guestRepo.findAllByHotelIdAndIsUserBanned(hotelId, true);
+    public ResponseEntity<?> getAllBannedGuests(String hotelId, String email) {
+        List<Guest> guestList;
+        if (email != null && !email.isEmpty()) {
+            guestList = guestRepo.findByHotelIdAndEmail(hotelId, email).stream()
+                    .filter(Guest::getIsUserBanned)
+                    .collect(Collectors.toList());
+        } else {
+            guestList = guestRepo.findAllByHotelIdAndIsUserBanned(hotelId, true);
+        }
+
+        if (guestList.isEmpty()) {
+            return ResponseClass.responseFailure("records not found");
+        }
+
         List<GuestDTORecord> guestDtoList = guestList.stream().map(GuestDTORecord::new).toList();
         return ResponseClass.responseSuccess("guest information", "guest", guestDtoList);
     }
 
-    public ResponseEntity<?> getAllEmailUnverifiedGuests(String hotelId) {
-        List<Guest> guestList = guestRepo.findAllByHotelIdAndIsEmailVerified(hotelId, false);
-        if (guestList.isEmpty()){return ResponseClass.responseFailure("records not found");}
+    public ResponseEntity<?> getAllEmailUnverifiedGuests(String hotelId, String email) {
+        List<Guest> guestList;
+        if (email != null && !email.isEmpty()) {
+            guestList = guestRepo.findByHotelIdAndEmail(hotelId, email).stream()
+                    .filter(guest -> !guest.getIsEmailVerified())
+                    .collect(Collectors.toList());
+        } else {
+            guestList = guestRepo.findAllByHotelIdAndIsEmailVerified(hotelId, false);
+        }
+
+        if (guestList.isEmpty()) {
+            return ResponseClass.responseFailure("records not found");
+        }
+
         List<GuestDTORecord> guestDtoList = guestList.stream().map(GuestDTORecord::new).toList();
         return ResponseClass.responseSuccess("guest information", "guest", guestDtoList);
     }
 
-    public ResponseEntity<?> getAllPhoneUnverifiedGuests(String hotelId) {
-        List<Guest> guestList = guestRepo.findAllByHotelIdAndIsPhoneVerified(hotelId, false);
-        if (guestList.isEmpty()) {return ResponseClass.responseFailure("records not found");}
+    public ResponseEntity<?> getAllPhoneUnverifiedGuests(String hotelId, String email) {
+        List<Guest> guestList;
+        if (email != null && !email.isEmpty()) {
+            guestList = guestRepo.findByHotelIdAndEmail(hotelId, email).stream()
+                    .filter(guest -> !guest.getIsPhoneVerified())
+                    .collect(Collectors.toList());
+        } else {
+            guestList = guestRepo.findAllByHotelIdAndIsPhoneVerified(hotelId, false);
+        }
+
+        if (guestList.isEmpty()) {
+            return ResponseClass.responseFailure("records not found");
+        }
+
         List<GuestDTORecord> guestDtoList = guestList.stream().map(GuestDTORecord::new).toList();
         return ResponseClass.responseSuccess("guest information", "guest", guestDtoList);
     }

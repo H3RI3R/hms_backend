@@ -117,6 +117,26 @@ public class StaffService {
                 new DateTimeWeekDay(staff.getCreatedAt() == null ? Instant.now() : staff.getCreatedAt()))).toList();
         return ResponseClass.responseSuccess("staffs found", "staffs", staffs1);
     }
+    public ResponseEntity<?> searchStaffByEmail(String hotelId, String email) {
+        List<Staff> staffs = staffRepo.findByHotelIdAndEmail(hotelId, email);
+
+        if (staffs.isEmpty()) {
+            return ResponseClass.responseFailure("Staff not found with email: " + email);
+        }
+
+        List<StaffDTORecord> staffs1 = staffs.stream().map(staff -> new StaffDTORecord(
+                staff.getId(),
+                staff.getHotelId(),
+                staff.getName(),
+                staff.getUserName(),
+                staff.getEmail(),
+                staff.getRole(),
+                (staff.getStatus() == null ? "ENABLED" : staff.getStatus()),
+                new DateTimeWeekDay(staff.getCreatedAt() == null ? Instant.now() : staff.getCreatedAt()))).toList();
+
+        return ResponseClass.responseSuccess("Staff found", "staffs", staffs1);
+    }
+
 
     public ResponseEntity<?> deleteStaff(String hotelId, Long id) {
         Staff staff = staffRepo.findByIdAndHotelId(id, hotelId);
@@ -185,4 +205,6 @@ public class StaffService {
             String status,
             DateTimeWeekDay createdAt
     ){}
+
+
 }

@@ -2,6 +2,7 @@ com/example/main/ManageHotel/Entity/BedTypes.class
 com/example/main/Setting/controller/SystemUsageController.class
 com/example/main/ReportAndRequest/Entity/ReportAndRequest.class
 com/example/main/Login/DTO/LoginDTO.class
+com/example/main/Searching/Repo/SearchingModal.class
 com/example/main/Hotel/Entity/Notification.class
 com/example/main/StaffManagement/DTO/CreateRoleDTO.class
 com/example/main/ManageHotel/Controller/AmenitiesController.class
@@ -74,6 +75,7 @@ com/example/main/ManageHotel/Entity/PremiumService.class
 com/example/main/Setting/controller/GeneralController.class
 com/example/main/ManageHotel/Controller/PremiumServiceController.class
 com/example/main/ManageHotel/Repo/RoomRepo.class
+com/example/main/Searching/Entity/SearchingModal.class
 com/example/main/Configuration/WebSocketConfig.class
 com/example/main/Exception/ResponseClass.class
 com/example/main/GuestManagement/Service/GuestService$GuestDTORecord.class

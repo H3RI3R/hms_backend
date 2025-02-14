@@ -125,13 +125,20 @@ public class SupportTicketService {
         return ResponseClass.responseSuccess("Ticket information", "ticket", new SupportTicketDTO(supportTicket));
     }
 
-    public ResponseEntity<?> getAllTickets(String hotelId, Integer page, Integer size) {
+    public ResponseEntity<?> getAllTickets(String hotelId, Integer page, Integer size , String email) {
         // Define the cache key
+        List<SupportTicket>supportTickets;
         String cacheKey = "hotelId:" + hotelId;
+        if (email != null && !email.isEmpty()) {
+            supportTickets = supportTicketRepo.findByHotelIdAndUserEmail(hotelId,email);
+        }
+        else {
+            supportTickets = supportTicketRepo.findByHotelIdOrderByAssignedAtDesc(hotelId);
+        }
         // Try to retrieve the data from Redis cache
         //List<SupportTicketDTO> supportTicketDTOS = (List<SupportTicketDTO>) cacheService.getFromHashCache(SupportTicketCacheKey, cacheKey);
 
-        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdOrderByAssignedAtDesc(hotelId);
+//       supportTickets = supportTicketRepo.findByHotelIdOrderByAssignedAtDesc(hotelId);
 //        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelId(hotelId);
 //        System.out.println(supportTickets.size() + " supportTickets");
         // Check if no tickets are found
