@@ -4,13 +4,11 @@ stages:
   - deploy
 
 variables:
-# MAVEN_CLI_OPTS: "-s settings.xml --batch-mode"
-# JAVA_HOME: "/usr/lib/jvm/java-17-openjdk"
+  # MAVEN_CLI_OPTS: "-s settings.xml --batch-mode"
+  # JAVA_HOME: "/usr/lib/jvm/java-17-openjdk"
 
 before_script:
-  - echo "Starting pipeline..."
-  # - export JAVA_HOME=/usr/lib/jvm/java-17-corretto
-  # - export PATH=$JAVA_HOME/bin:$PATH
+  - echo "Starting HMS pipeline..."
   - java -version
   - mvn --version
 
@@ -42,15 +40,37 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H 89.116.122.211 >> ~/.ssh/known_hosts
   script:
+    # Rename the JAR file
     - mv target/*.jar target/hms.jar
-    - scp -i ~/.ssh/id_rsa target/*.jar root@89.116.122.211:/mnt/vol1/HMS/
+
+    # Copy the JAR to the server
+    - scp -i ~/.ssh/id_rsa target/hms.jar root@89.116.122.211:/mnt/vol1/HMS/
+
+    # Set correct permissions
     - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "chown gitlab-runner:gitlab-runner /mnt/vol1/HMS/hms.jar"
+
+    # List files in the deployment directory
     - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ls -ltr /mnt/vol1/HMS/"
-    # Start the new erp.jar
-  #    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "nohup java -jar /mnt/vol1/IdCardBackend/idCard.jar > /mnt/vol1/IdCardBackend/idCard.log 2>&1 &"
-  #    # Verify that the new erp.jar is running
-  #    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ps aux | grep '[e]rp.jar'"
-  # only:
-  #   - master
+
+    # Stop any running hms.jar processes before starting a new one
+    - |
+      ssh -i ~/.ssh/id_rsa root@89.116.122.211 '
+      PIDS=$(ps aux | grep "[h]ms.jar" | awk "{print \$2}");
+      if [ -n "$PIDS" ]; then
+        echo "Stopping existing hms.jar processes: $PIDS";
+        echo "$PIDS" | xargs -r kill || echo "Failed to kill one or more PIDs";
+        sleep 5;
+        echo "Processes stopped";
+      else
+        echo "No running hms.jar found";
+      fi
+      exit 0' || true
+
+    # Start the new HMS application
+    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "nohup java -jar /mnt/vol1/HMS/hms.jar > /mnt/vol1/HMS/hms.log 2>&1 &"
+
+    # Verify if the HMS application is running
+    - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ps aux | grep '[h]ms.jar'"
+
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
