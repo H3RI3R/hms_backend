@@ -3,16 +3,7 @@ stages:
   - package
   - deploy
 
-variables:
-  # MAVEN_CLI_OPTS: "-s settings.xml --batch-mode"
-  # JAVA_HOME: "/usr/lib/jvm/java-17-openjdk"
-
-before_script:
-  - echo "Starting HMS pipeline..."
-  - java -version
-  - mvn --version
-
-build:
+build_job:
   stage: build
   image: maven:3.9.9-amazoncorretto-17
   script:
@@ -21,7 +12,7 @@ build:
     paths:
       - target/
 
-package:
+package_job:
   stage: package
   image: maven:3.9.9-amazoncorretto-17
   script:
@@ -30,7 +21,7 @@ package:
     paths:
       - target/*.jar
 
-deploy:
+deploy_job:
   stage: deploy
   image: alpine:latest
   before_script:
@@ -40,19 +31,10 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H 89.116.122.211 >> ~/.ssh/known_hosts
   script:
-    # Rename the JAR file
     - mv target/*.jar target/hms.jar
-
-    # Copy the JAR to the server
     - scp -i ~/.ssh/id_rsa target/hms.jar root@89.116.122.211:/mnt/vol1/HMS/
-
-    # Set correct permissions
     - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "chown gitlab-runner:gitlab-runner /mnt/vol1/HMS/hms.jar"
-
-    # List files in the deployment directory
     - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ls -ltr /mnt/vol1/HMS/"
-
-    # Stop any running hms.jar processes before starting a new one
     - |
       ssh -i ~/.ssh/id_rsa root@89.116.122.211 '
       PIDS=$(ps aux | grep "[h]ms.jar" | awk "{print \$2}");
@@ -65,12 +47,7 @@ deploy:
         echo "No running hms.jar found";
       fi
       exit 0' || true
-
-    # Start the new HMS application
     - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "nohup java -jar /mnt/vol1/HMS/hms.jar > /mnt/vol1/HMS/hms.log 2>&1 &"
-
-    # Verify if the HMS application is running
     - ssh -i ~/.ssh/id_rsa root@89.116.122.211 "ps aux | grep '[h]ms.jar'"
-
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
