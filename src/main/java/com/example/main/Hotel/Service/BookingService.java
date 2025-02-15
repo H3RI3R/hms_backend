@@ -236,6 +236,8 @@ public class BookingService {
         paymentClass.setTotalAmount(totalAmount);
         paymentClass.setTotalPaid(totalPaid);
         paymentClass.setPendingAmount(pendingAmount);
+        paymentClass.setRefundAmount(0.0);
+        paymentClass.setRecievedAmount(0.0);
         paymentClass.setUserName(guestName);
         paymentClass.setUserEmail(email);
         paymentClass.setPaymentType("CASH");

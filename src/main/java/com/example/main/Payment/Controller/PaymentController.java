@@ -22,62 +22,35 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping("/pay/{bookingId}")
-    public ResponseEntity<?> offlinePayment(@PathVariable long bookingId,@RequestParam double amount){
-        return paymentService.offlinePayment(bookingId,amount);
-    }
-
-    @GetMapping("/getBookingDetails/{bookingId}")
-    public ResponseEntity<?> getBookingDetails(@RequestHeader("Authorization") String token,@PathVariable long bookingId) {
-        return paymentService.getBookingDetails(token,bookingId);
-    }
+//    @PostMapping("/pay/{bookingId}")
+//    public ResponseEntity<?> offlinePayment(@PathVariable long bookingId,@RequestParam double amount){
+//        return paymentService.offlinePayment(bookingId,amount);
+//    }
+//
+//    @GetMapping("/getBookingDetails/{bookingId}")
+//    public ResponseEntity<?> getBookingDetails(@RequestHeader("Authorization") String token,@PathVariable long bookingId) {
+//        return paymentService.getBookingDetails(token,bookingId);
+//    }
     @GetMapping("/getPaymentDetailsByPaymentId/{paymentId}")
     public ResponseEntity<?> getPaymentDetailsByPaymentId(@RequestHeader("Authorization") String token ,
                                                           @PathVariable Long paymentId){
         return paymentService.getPaymentDetailsByPaymentId(token, paymentId);
     }
-    // All  Payments
-    @GetMapping("/getAllPaymentByHotelId")
-    public ResponseEntity<Map<String, Object>> getPaymentsByHotel(@RequestHeader("Authorization") String token) {
-        return paymentService.getPaymentsByHotelId(token);
+
+    @GetMapping("/getAllPayments")
+    public ResponseEntity<Map<String, Object>> getAllPayments(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "status", required = false) PaymentStatus status) {
+        return paymentService.getPayments(token, status);
     }
 
-    @GetMapping("/getPendingPayments")
-    public ResponseEntity<Map<String, Object>> getPendingPayments(@RequestHeader("Authorization") String token) {
-        return paymentService.getPaymentsByStatus(token, PaymentStatus.PENDING, "Pending payments retrieved successfully");
-    }
-
-    @GetMapping("/getApprovedPayments")
-    public ResponseEntity<Map<String, Object>> getApprovedPayments(@RequestHeader("Authorization") String token) {
-        return paymentService.getPaymentsByStatus(token, PaymentStatus.ACCEPTED, "Approved payments retrieved successfully");
-    }
-
-    @GetMapping("/getSuccessfulPayments")
-    public ResponseEntity<Map<String, Object>> getSuccessfulPayments(@RequestHeader("Authorization") String token) {
-        return paymentService.getPaymentsByStatus(token, PaymentStatus.SUCCESSFUL, "Successful payments retrieved successfully");
-    }
-
-    @GetMapping("/getRejectedPayments")
-    public ResponseEntity<Map<String, Object>> getRejectedPayments(@RequestHeader("Authorization") String token) {
-        return paymentService.getPaymentsByStatus(token, PaymentStatus.REJECTED, "Rejected payments retrieved successfully");
-    }
-
-    @GetMapping("/getFailedPayments")
-    public ResponseEntity<Map<String, Object>> getFailedPayments(@RequestHeader("Authorization") String token) {
-        return paymentService.getPaymentsByStatus(token, PaymentStatus.FAILED, "Failed payments retrieved successfully");
-    }
-
-    //Accept
-    @PutMapping("/acceptPayment/{paymentId}")
-    public ResponseEntity<Map<String, Object>> acceptPayment(@RequestHeader("Authorization") String token,
-                                                             @PathVariable Long paymentId) {
-        return paymentService.updatePaymentStatus(token, paymentId, PaymentStatus.ACCEPTED);
-    }
-    //Reject
-    @PutMapping("/rejectPayment/{paymentId}")
-    public ResponseEntity<Map<String, Object>> rejectPayment(@RequestHeader("Authorization") String token,
-                                                             @PathVariable Long paymentId) {
-        return paymentService.updatePaymentStatus(token, paymentId, PaymentStatus.REJECTED);
+    @PutMapping("/{status}/{paymentId}")
+    public ResponseEntity<Map<String, Object>> statusPayment(
+            @RequestHeader("Authorization") String token,
+            @PathVariable PaymentStatus status,
+            @PathVariable Long paymentId,
+            @RequestParam(value = "refundAmount", required = false) Double refundAmount ){
+        return paymentService.updatePaymentStatus(token, paymentId, status, refundAmount);
     }
 
 }

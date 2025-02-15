@@ -28,6 +28,11 @@ public class PaymentClass {
     private double totalAmount;
     private double totalPaid;
     private double pendingAmount;
+    @Column(nullable = false, columnDefinition = "double precision default 0.0")
+    private double recievedAmount;
+//    @Column("")
+@Column(nullable = false, columnDefinition = "double precision default 0.0")
+    private double refundAmount;
 
 
     private double tax;
