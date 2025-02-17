@@ -232,8 +232,8 @@ public class SupportTicketService {
         return ResponseClass.responseSuccess(supportTicket.getStatus().toString());
     }
 
-    public ResponseEntity<?> getPendingTickets(String hotelId) {
-        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdAndStatus(hotelId, TicketStatus.PENDING);
+    public ResponseEntity<?> getPendingTickets(String hotelId , String email) {
+        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdAndStatusAndUserEmail(hotelId, TicketStatus.PENDING , email);
         if(supportTickets.isEmpty()){
             return ResponseClass.responseFailure("No tickets found");
         }
@@ -241,8 +241,8 @@ public class SupportTicketService {
         return ResponseClass.responseSuccess("All tickets", "tickets", supportTicketDTOS);
     }
 
-    public ResponseEntity<?> getClosedTickets(String hotelId) {
-        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdAndStatus(hotelId, TicketStatus.CLOSED);
+    public ResponseEntity<?> getClosedTickets(String hotelId ,String email) {
+        List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdAndStatusAndUserEmail(hotelId, TicketStatus.CLOSED ,email);
         if(supportTickets.isEmpty()){
             return ResponseClass.responseFailure("No tickets found");
         }
@@ -272,8 +272,8 @@ public class SupportTicketService {
         return ResponseClass.responseSuccess("Ticket deleted successfully");
     }
 
-    public ResponseEntity<?> getAnsTickets(String hotelId) {
-    List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdAndStatus(hotelId, TicketStatus.ANSWERED);
+    public ResponseEntity<?> getAnsTickets(String hotelId, String email) {
+    List<SupportTicket> supportTickets = supportTicketRepo.findByHotelIdAndStatusAndUserEmail(hotelId, TicketStatus.ANSWERED , email);
     if(supportTickets.isEmpty()){
         return ResponseClass.responseFailure("No tickets found");
     }

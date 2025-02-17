@@ -64,7 +64,7 @@ public class StaffController {
         }
     }
 
-    @GetMapping("/getBannedGuest")
+    @GetMapping("/getBannedStaff")
     public ResponseEntity<?> getBannedGuest(
             @RequestHeader("Authorization") String token){
         String hotelId = configClass.tokenValue(token, "hotelId");

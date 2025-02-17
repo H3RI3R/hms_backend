@@ -13,6 +13,7 @@ public interface PaymentRepo extends JpaRepository<PaymentClass,Long> {
 
     PaymentClass findByBookingNo(String bookingNo);
     List<PaymentClass> findByHotelId(String hotelId);
+    List<PaymentClass> findByTransactionNo(String transactionNo);
 
     List<PaymentClass> findByHotelIdAndPaymentStatus(String hotelId, PaymentStatus status);
 }

@@ -15,6 +15,7 @@ public interface SupportTicketRepo extends JpaRepository<SupportTicket, Long>{
     List<SupportTicket> findByHotelIdOrderByAssignedAtDesc(String hotelId);
 List<SupportTicket> findByHotelIdAndUserEmail(String hotelId ,String userEmail);
     List<SupportTicket> findByHotelIdAndStatus(String hotelId, TicketStatus name);
+    List<SupportTicket> findByHotelIdAndStatusAndUserEmail(String hotelId, TicketStatus name , String userEmail);
 
     List<SupportTicket> findByHotelId(String hotelId);
 }

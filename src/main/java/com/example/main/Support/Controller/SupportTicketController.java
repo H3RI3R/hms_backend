@@ -113,17 +113,19 @@ public class SupportTicketController {
     }
     @GetMapping("/getPendingTickets")
     public ResponseEntity<?> getPendingTickets(
-            @RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email
     ) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return supportTicketService.getPendingTickets(hotelId);
+        return supportTicketService.getPendingTickets(hotelId,email);
     }
     @GetMapping("/getClosedTickets")
     public ResponseEntity<?> getClosedTickets(
-            @RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email
     ) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return supportTicketService.getClosedTickets(hotelId);
+        return supportTicketService.getClosedTickets(hotelId ,email);
     }
     @GetMapping("/getOpenTickets")
     public ResponseEntity<?> getOpenTickets(
@@ -135,10 +137,11 @@ public class SupportTicketController {
 
     @GetMapping("/getAnsTickets")
     public ResponseEntity<?> getAnsTickets(
-            @RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token ,
+            @RequestParam(value = "search" ,required = false )String email
     ) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return supportTicketService.getAnsTickets(hotelId);
+        return supportTicketService.getAnsTickets(hotelId ,email);
     }
 
     @PostMapping("/replyToTicket/{ticketNo}")

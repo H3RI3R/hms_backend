@@ -37,8 +37,14 @@ public class BookingActionsService {
         bookingAction.setDate(date);
         bookingActionRepository.save(bookingAction);
     }
-    public List<BookingAction> getAllBookingActions() {
-        return bookingActionRepository.findAll();
+    public List<BookingAction> getAllBookingActions(String bookingNo) {
+        if (bookingNo!=null){
+            return bookingActionRepository.findByBookingNo(bookingNo);
+        }
+        else {
+            return bookingActionRepository.findAll();
+        }
+
     }
 
 }

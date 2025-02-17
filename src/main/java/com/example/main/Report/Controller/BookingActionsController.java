@@ -22,8 +22,10 @@ public class BookingActionsController {
         return bookingActionsService.getActionReportByBookingNo(bookingNo);
     }
     @GetMapping("booking/getAll")
-    public ResponseEntity<Map<String, Object>> getAllBookingActions(@RequestHeader("Authorization") String token) {
-        List<BookingAction> bookingActions = bookingActionsService.getAllBookingActions();
+    public ResponseEntity<Map<String, Object>> getAllBookingActions(@RequestHeader("Authorization") String token
+                                                                    ,@RequestParam(value = "search" , required = false)String bookingNo
+                                                                    ) {
+        List<BookingAction> bookingActions = bookingActionsService.getAllBookingActions(bookingNo);
 
         return ResponseClass.responseSuccess("Booking actions retrieved successfully", "bookingReport", bookingActions);
     }

@@ -52,6 +52,7 @@ public class BookingService {
     private ReceivedPaymentsService receivedPaymentsService;
 
 
+
     public ResponseEntity<?> findAvailableRoom(String token, Long roomTypeId, Integer totalRoom, LocalDateTime checkInDate, LocalDateTime checkOutDate) {
         String hotelId =  configClass.tokenValue(token,"hotelId");
        // int numberOfDays = (int) Duration.between(checkInDate, checkOutDate).toDays();
@@ -228,18 +229,29 @@ public class BookingService {
         //we need to add method to send the guest an email when ssuccessfully room booked and then add the email
         //notification history so that Room booked also adds up in notification history .
 
+        String transactionNo = generateUniqueId();
+
 
         PaymentClass paymentClass = new PaymentClass();
+
         paymentClass.setBookingId(booking.getBookingId());
+        List<PaymentClass> test =paymentRepo.findByTransactionNo(transactionNo);
+        if(test==null){
+            paymentClass.setTransactionNo(transactionNo);
+
+        }
         paymentClass.setHotelId(hotelId);
         paymentClass.setBookingNo(bookingNo);
         paymentClass.setTotalAmount(totalAmount);
+        paymentClass.setTransactionNo(transactionNo);
         paymentClass.setTotalPaid(totalPaid);
         paymentClass.setPendingAmount(pendingAmount);
         paymentClass.setRefundAmount(0.0);
         paymentClass.setRecievedAmount(0.0);
         paymentClass.setUserName(guestName);
+
         paymentClass.setUserEmail(email);
+        paymentClass.setPaymentDate(LocalDateTime.now());
         paymentClass.setPaymentType("CASH");
         if(pendingAmount==0)
         {
@@ -252,6 +264,14 @@ public class BookingService {
         receivedPaymentsService.processPayment("paymentReceived", booking.getBookingNo(), guestName, email, totalPaid, roleType ,totalAmount,pendingAmount);
         return ResponseClass.responseSuccess("booking created successfully");
 
+    }
+//    public static String isUnqiue(String transactionNo){
+//
+//    }
+    public static String generateUniqueId() {
+        Random random = new Random();
+        int randomNumber = 100000 + random.nextInt(900000); // Generates a 6-digit number (100000 - 999999)
+        return "CASH" + randomNumber;
     }
 
     public ResponseEntity<?> updateCheckOut(String token, Long bookingId) {

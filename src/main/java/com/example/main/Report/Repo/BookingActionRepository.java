@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface BookingActionRepository extends JpaRepository<BookingAction, Long> {
     List<BookingAction> findByBookingNo(String bookingNo);
+//    List<BookingAction> findByBookingNo(String bookingNo);
 
 }
