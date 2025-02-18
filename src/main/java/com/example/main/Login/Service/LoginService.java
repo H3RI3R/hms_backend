@@ -45,6 +45,11 @@ public class LoginService {
 
     public HashMap<String, String> loginGenerateToken(LoginDTO loginDetails,HttpServletRequest request){
         HashMap<String,String> response =  new HashMap<>();
+//        if(loginDetails.getLat() == null && loginDetails.getLog() == null){
+//            response.put("status","failed");
+//            response.put("message","Lat and log not provided by saqib .");
+//            return response;
+//        }
         LoginModel loginInfo = loginRepo.findByEmail(loginDetails.getEmail());
         if (loginInfo != null) {
             if(loginInfo.getIsActive() != null && loginInfo.getIsActive().equals(false)){
@@ -53,11 +58,7 @@ public class LoginService {
                 return response;
             }
             String userPassword = loginInfo.getPassword();
-            if(loginDetails.getLat() == null && loginDetails.getLog() == null){
-                response.put("status","failed");
-                response.put("message","Lat and log not provided by saqib .");
-                return response;
-            }
+
             if(passwordEncoder.matches(loginDetails.getPassword(), userPassword)) {
                 String token;
                 if(loginDetails.isRememberMe()){
