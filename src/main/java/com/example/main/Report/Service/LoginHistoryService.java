@@ -15,6 +15,14 @@ public class LoginHistoryService {
     private LoginHistoryRepo loginHistoryRepo;
 
     public ResponseEntity<?> getLoginHistory(String email){
+        if (email!=null){
+            List<LoginModel> a=loginHistoryRepo.findByEmail(email);
+            if (a.isEmpty()){
+                return ResponseClass.responseFailure("No record found with this email "+email);
+            }
+            return ResponseClass.responseSuccess("Login details for user Success","loginModal",a);
+        }
+
         List<LoginModel> a=loginHistoryRepo.findAll();
         return ResponseClass.responseSuccess("Login details success","loginModal",a);
 

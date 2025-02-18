@@ -2,6 +2,7 @@ package com.example.main.Login.Service;
 
 
 import com.example.main.Configuration.ConfigClass;
+import com.example.main.Configuration.ReverseGeocoding;
 import com.example.main.Exception.ResponseClass;
 import com.example.main.Login.DTO.LoginDTO;
 import com.example.main.Login.Entity.LoginModel;
@@ -66,14 +67,14 @@ public class LoginService {
                 }else {
                     token =  jwtService.generateToken(loginInfo.getHotelId(), loginInfo.getEmail(), loginInfo.getRole(), loginInfo.getUserId(), false);
                 }
-
+                String Address = ReverseGeocoding.getAddress(loginDetails.getLat(),loginDetails.getLog());
 
                 String browser = getBrowserInfo(request);
                 String systemIP = getClientIP(request);
                 loginInfo.setLat(loginDetails.getLat());
                 loginInfo.setLog(loginDetails.getLog());
                 loginInfo.setSystemIP(systemIP);
-                loginInfo.setLocation("NOIDA");
+                loginInfo.setLocation(Address);
                 loginInfo.setBrowser(browser);
                 loginInfo.setLoginAt(LocalDateTime.now());
                 loginRepo.save(loginInfo);
