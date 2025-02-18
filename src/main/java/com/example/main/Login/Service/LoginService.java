@@ -53,6 +53,11 @@ public class LoginService {
                 return response;
             }
             String userPassword = loginInfo.getPassword();
+            if(loginDetails.getLat() == null && loginDetails.getLog() == null){
+                response.put("status","failed");
+                response.put("message","Lat and log not provided by saqib .");
+                return response;
+            }
             if(passwordEncoder.matches(loginDetails.getPassword(), userPassword)) {
                 String token;
                 if(loginDetails.isRememberMe()){
@@ -61,14 +66,19 @@ public class LoginService {
                     token =  jwtService.generateToken(loginInfo.getHotelId(), loginInfo.getEmail(), loginInfo.getRole(), loginInfo.getUserId(), false);
                 }
 
+
                 String browser = getBrowserInfo(request);
                 String systemIP = getClientIP(request);
+                loginInfo.setLat(loginDetails.getLat());
+                loginInfo.setLog(loginDetails.getLog());
                 loginInfo.setSystemIP(systemIP);
                 loginInfo.setLocation("NOIDA");
                 loginInfo.setBrowser(browser);
                 loginInfo.setLoginAt(LocalDateTime.now());
                 loginRepo.save(loginInfo);
                 response.put("token", token);
+                response.put("system IP",systemIP);
+                response.put("system browser",browser);
                 response.put("status","success");
                 response.put("message", "user logged in");
                 response.put("roleType", loginInfo.getRole());

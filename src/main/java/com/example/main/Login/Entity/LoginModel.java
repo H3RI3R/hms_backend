@@ -29,6 +29,8 @@ public class LoginModel {
     private String location;
     private String browser;
     private LocalDateTime loginAt;
+    private String lat;
+    private String log;
 
     private Boolean isActive = true;
 }

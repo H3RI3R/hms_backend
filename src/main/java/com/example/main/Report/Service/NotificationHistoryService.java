@@ -18,8 +18,15 @@ public class NotificationHistoryService {
     @Autowired
     private NotificationHistoryRepository notificationHistoryRepository;
 
-    public ResponseEntity<Map<String, Object>> getAllNotifications() {
-        List<NotificationHistory> notifications = notificationHistoryRepository.findAll();
+    public ResponseEntity<Map<String, Object>> getAllNotifications(String email) {
+        if(email!=null){
+            List<NotificationHistory> notifications = notificationHistoryRepository.findByUserEmail(email);
+            if(notifications.isEmpty()){
+                return ResponseClass.responseFailure("No notification found for this user "+email);
+            }
+            return ResponseClass.responseSuccess("Notifications for user fetched successfully", "notifications", notifications);
+        } List<NotificationHistory> notifications = notificationHistoryRepository.findAll();
+
         if (notifications.isEmpty()) {
             return ResponseClass.responseFailure("No notifications found");
         }

@@ -9,5 +9,9 @@ public class LoginDTO {
 
     private String password;
 
+    private String lat;
+
+    private String log;
+
     private boolean rememberMe = false;
 }

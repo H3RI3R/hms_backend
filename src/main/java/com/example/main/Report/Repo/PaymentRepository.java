@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<BookingPayments, Long> {
     List<BookingPayments> findByPaymentType(String paymentType);
+    List<BookingPayments> findByPaymentTypeAndUserEmail(String paymentType,String userEmail);
 }

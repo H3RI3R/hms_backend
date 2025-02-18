@@ -18,8 +18,10 @@ public class NotificationHistoryController {
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<Map<String, Object>> getAllNotifications(@RequestHeader("Authorization") String token) {
-        return notificationHistoryService.getAllNotifications();
+    public ResponseEntity<Map<String, Object>> getAllNotifications(@RequestHeader("Authorization") String token,
+                                                                    @RequestParam (value = "search" ,required = false)String email
+    ) {
+        return notificationHistoryService.getAllNotifications( email);
     }
     @GetMapping("/getMessageById/{id}")
     public ResponseEntity<?> getMessageById(@RequestHeader("Authorization") String token,@PathVariable Long id) {

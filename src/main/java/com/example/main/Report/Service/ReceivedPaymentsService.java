@@ -37,7 +37,14 @@ public class ReceivedPaymentsService {
 
         return ResponseClass.responseSuccess("Payment processed successfully", "payment", payment);
     }
-    public ResponseEntity<?> getAllPayments() {
+    public ResponseEntity<?> getAllPayments( String email) {
+        if(email!=null){
+            List<BookingPayments>  receivedPayments = paymentRepository.findByPaymentTypeAndUserEmail("paymentReceived",email);
+            if (receivedPayments == null || receivedPayments.isEmpty()) {
+                return ResponseClass.responseFailure("No returned payment found for user " + email);
+            }
+            return ResponseClass.responseSuccess("Payments retrieved for user successfully", "payments", receivedPayments);
+        }
         List<BookingPayments> receivedPayments = paymentRepository.findByPaymentType("paymentReceived");
         if (receivedPayments.isEmpty()) {
             return ResponseClass.responseFailure("No payments found");

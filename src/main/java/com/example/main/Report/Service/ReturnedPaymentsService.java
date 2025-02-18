@@ -30,9 +30,16 @@ public class ReturnedPaymentsService {
         bookingPaymentsRepo.save(payment);
         return ResponseClass.responseSuccess("Returned payment added successfully", "payment", payment);
     }
-    public ResponseEntity<?> getAllReturnedPayments() {
+    public ResponseEntity<?> getAllReturnedPayments(String email) {
+        if (email != null) {
+            List<BookingPayments> returnedPayments = bookingPaymentsRepo.findByPaymentTypeAndUserEmail("paymentReturned", email);
+            if (returnedPayments == null || returnedPayments.isEmpty()) {
+                return ResponseClass.responseFailure("No returned payment found for user " + email);
+            }
+            return ResponseClass.responseSuccess("Returned payments for user retrieved successfully", "returnedPayments", returnedPayments);
+        }
         List<BookingPayments> returnedPayments = bookingPaymentsRepo.findByPaymentType("paymentReturned");
-        if (returnedPayments.isEmpty()) {
+        if (returnedPayments == null || returnedPayments.isEmpty()) {
             return ResponseClass.responseFailure("No returned payments found");
         }
         return ResponseClass.responseSuccess("Returned payments retrieved successfully", "returnedPayments", returnedPayments);
