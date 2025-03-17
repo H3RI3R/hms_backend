@@ -176,6 +176,7 @@ public class PaymentService {
         LocalDateTime toDateTime = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+
         if (fromDate != null && !fromDate.isEmpty()) {
             LocalDate parsedFromDate = LocalDate.parse(fromDate, formatter);
             fromDateTime = parsedFromDate.atStartOfDay();
