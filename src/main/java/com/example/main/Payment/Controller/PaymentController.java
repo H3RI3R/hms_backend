@@ -36,12 +36,17 @@ public class PaymentController {
                                                           @PathVariable Long paymentId){
         return paymentService.getPaymentDetailsByPaymentId(token, paymentId);
     }
-
     @GetMapping("/getAllPayments")
     public ResponseEntity<Map<String, Object>> getAllPayments(
             @RequestHeader("Authorization") String token,
-            @RequestParam(value = "status", required = false) PaymentStatus status) {
-        return paymentService.getPayments(token, status);
+            @RequestParam(value = "status", required = false) PaymentStatus status,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        return paymentService.getPayments(token, status, search, fromDate, toDate, page, size);
     }
 
 

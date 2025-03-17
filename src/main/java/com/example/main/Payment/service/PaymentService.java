@@ -9,12 +9,18 @@ import com.example.main.Payment.entity.PaymentClass;
 import com.example.main.Payment.entity.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -161,23 +167,70 @@ public class PaymentService {
 //    }
 
     //Get payments by status
-    public ResponseEntity<Map<String, Object>> getPayments(String token, PaymentStatus status) {
+    public ResponseEntity<Map<String, Object>> getPayments(String token, PaymentStatus status, String search, String fromDate, String toDate, int page, int size) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        List<PaymentClass> payments;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<PaymentClass> paymentsPage;
 
-        if (status == null) {
-            // Get all payments if no status is specified
-            payments = paymentRepo.findByHotelId(hotelId);
-        } else {
-            // Get payments by status if specified
-            payments = paymentRepo.findByHotelIdAndPaymentStatus(hotelId, status);
+        LocalDateTime fromDateTime = null;
+        LocalDateTime toDateTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        if (fromDate != null && !fromDate.isEmpty()) {
+            LocalDate parsedFromDate = LocalDate.parse(fromDate, formatter);
+            fromDateTime = parsedFromDate.atStartOfDay();
         }
-        if (payments.isEmpty()) {
-            String message = (status == null) ? "No payments found for this hotel."
-                    : "No " + status.toString().toLowerCase() + " payments found for this hotel.";
-            return ResponseClass.responseFailure(message);
+        if (toDate != null && !toDate.isEmpty()) {
+            LocalDate parsedToDate = LocalDate.parse(toDate, formatter);
+            toDateTime = parsedToDate.atTime(23, 59, 59);
         }
 
-        return ResponseClass.responseSuccess("Payments retrieved successfully", "payments", payments);
+        if (search != null && !search.isEmpty()) {
+            boolean isEmail = search.contains("@");
+            paymentsPage = isEmail
+                    ? paymentRepo.findByHotelIdAndUserEmailContaining(hotelId, search, pageable)
+                    : paymentRepo.findByHotelIdAndUserNameContaining(hotelId, search, pageable);
+
+            if (paymentsPage.isEmpty()) {
+                String message = isEmail ? "No account found with email: " + search : "No account found with username: " + search;
+                return ResponseClass.responseFailure(message);
+            }
+            if (status != null) {
+                List<PaymentClass> filteredPayments = paymentsPage.getContent().stream()
+                        .filter(payment -> payment.getPaymentStatus() == status)
+                        .collect(Collectors.toList());
+
+                if (filteredPayments.isEmpty()) {
+                    return ResponseClass.responseFailure("No payments found with the given search and status.");
+                }
+
+                paymentsPage = new PageImpl<>(filteredPayments, pageable, filteredPayments.size());
+            }
+        }
+        else if (status != null && fromDateTime != null && toDateTime != null) {
+            paymentsPage = paymentRepo.findByHotelIdAndPaymentStatusAndPaymentDateBetween(hotelId, status, fromDateTime, toDateTime, pageable);
+        }
+        else if (fromDateTime != null && toDateTime != null) {
+            paymentsPage = paymentRepo.findByHotelIdAndPaymentDateBetween(hotelId, fromDateTime, toDateTime, pageable);
+        }
+        else if (status != null) {
+            paymentsPage = paymentRepo.findByHotelIdAndPaymentStatus(hotelId, status, pageable);
+        }
+        else {
+            paymentsPage = paymentRepo.findByHotelId(hotelId, pageable);
+        }
+
+        if (paymentsPage.isEmpty()) {
+            return ResponseClass.responseFailure("No payments found for this hotel.");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Payments retrieved successfully");
+        response.put("payments", paymentsPage.getContent());
+        response.put("currentPage", paymentsPage.getNumber() + 1);
+        response.put("totalPages", paymentsPage.getTotalPages());
+        response.put("totalItems", paymentsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 }
