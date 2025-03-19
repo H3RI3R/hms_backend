@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,7 +106,9 @@ public class StaffService {
 
     public ResponseEntity<?> getAllStaff(String hotelId) {
         List<Staff> staffs = staffRepo.findAllByHotelId(hotelId);
-        if(staffs.isEmpty()){ throw new ResponseStatusException(HttpStatus.NOT_FOUND, "staffs not found"); }
+        if (staffs.isEmpty()) {
+            return ResponseClass.responseSuccess("No staffs found", "staffs", staffs);
+        }
         List<StaffDTORecord> staffs1 = staffs.stream().map(staff -> new StaffDTORecord(
                 staff.getId(),
                 staff.getHotelId(),
