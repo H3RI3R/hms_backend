@@ -178,6 +178,7 @@ public class GuestService {
         }
 
         guest.setIsUserBanned(status);
+        guest.setIsActive(!status);
         guestRepo.save(guest);
 
         return ResponseClass.responseSuccess(status ? "Guest banned" : "Guest unbanned");
