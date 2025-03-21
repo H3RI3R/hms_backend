@@ -134,6 +134,13 @@ public class BookingService {
             if (guests.isEmpty()) {
                 return ResponseClass.responseFailure("Guest not found for the given email");
             }
+            boolean banOrUnban = false;
+            List<Guest> guest11 = guestRepo.findByHotelIdAndEmail(hotelId, email);
+            for (Guest guest1 : guest11) {
+                if (guest1.getIsUserBanned()) {
+                    return ResponseClass.responseFailure("Guest is Banned and cannot Book room");
+                }
+            }
             for (Guest existingGuest : guests) {
                 guest  = new Guest();
                 guest.setFirstName(existingGuest.getFirstName());
@@ -150,6 +157,10 @@ public class BookingService {
             booking.setPhoneNo(existingGuestBooking.getPhoneNo());
             booking.setAddress(existingGuestBooking.getAddress());
         } else if ("WalkInGuest".equalsIgnoreCase(bookingType)) {
+            Set<Guest> newUser = guestRepo.findByEmailAndHotelId(email, hotelId);
+            if (!newUser.isEmpty()) {
+                return ResponseClass.responseFailure("Guest email is already used!");
+            }
             guest = new Guest();
             guest.setFirstName(guestName);
             guest.setEmail(email);
@@ -197,6 +208,7 @@ public class BookingService {
                 daysBetween = 1;
             }
             double roomPrice = roomTypes.getRoomFare() * daysBetween;
+            booking.setRoomFare(roomPrice);
             totalAmount += roomPrice;
             selectedRooms.add(room);
 

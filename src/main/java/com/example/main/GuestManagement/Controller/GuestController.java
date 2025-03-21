@@ -101,7 +101,7 @@ public class GuestController {
     }
 
 
-    @GetMapping("/banned")
+    @GetMapping("/getAllBannedGuest")
     public ResponseEntity<?> getAllBannedGuest(
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "search", required = false) String email) {
@@ -127,8 +127,8 @@ public class GuestController {
         return guestService.getAllPhoneUnverifiedGuests(hotelId, email);
     }
 
-    @GetMapping("/banGuest/{id}")
-    public ResponseEntity<?> banGuest(
+    @GetMapping("/banUnbanGuestById/{id}")
+    public ResponseEntity<?> banUnbanGuest(
             @RequestHeader("Authorization") String token,
             @PathVariable Long id){
         String hotelId = configClass.tokenValue(token, "hotelId");

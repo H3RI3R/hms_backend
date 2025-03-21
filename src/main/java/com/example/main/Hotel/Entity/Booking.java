@@ -32,8 +32,8 @@ public class Booking {
     private boolean bookingStatus=false;
     private boolean bookingCancel=false;
     private boolean refundable= false;
+    private Double roomFare;
 
     @ElementCollection
     private List<Integer> roomNo;
-
 }

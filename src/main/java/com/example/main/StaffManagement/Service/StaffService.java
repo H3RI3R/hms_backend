@@ -176,6 +176,7 @@ public class StaffService {
             staff.setStatus("ENABLED");
             login.setIsActive(true);
             loginRepo.save(login);
+            return ResponseClass.responseFailure("Staff has been unbanned");
         }
         staffRepo.save(staff);
         return ResponseClass.responseSuccess("staff banned");
