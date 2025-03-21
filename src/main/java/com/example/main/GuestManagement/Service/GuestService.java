@@ -167,26 +167,21 @@ public class GuestService {
         List<GuestDTORecord> guestDtoList = guestList.stream().map(GuestDTORecord::new).toList();
         return ResponseClass.responseSuccess("guest information", "guest", guestDtoList);
     }
-
-    public ResponseEntity<?> banGuest(String hotelId, Long id) {
+    public ResponseEntity<?> banGuest(String hotelId, Boolean status, Long id) {
         Guest guest = guestRepo.findByIdAndHotelId(id, hotelId);
-        if (guest == null){
-            return ResponseClass.responseFailure("guest not found");
+        if (guest == null || guest.getIsDeleted()) {
+            return ResponseClass.responseFailure("Guest not found");
         }
-        if(guest.getIsDeleted()){
-            return ResponseClass.responseFailure("guest not found");
-        }
-        if(guest.getIsUserBanned()!=null && guest.getIsUserBanned()){
-            guest.setIsUserBanned(false);
-            guestRepo.save(guest);
-            return ResponseClass.responseSuccess("guest unbanned");
-        }else {
-            guest.setIsUserBanned(true);
-            guestRepo.save(guest);
-            return ResponseClass.responseSuccess("guest banned");
-        }
-    }
 
+        if (guest.getIsUserBanned() == status) {
+            return ResponseClass.responseFailure(status ? "Guest is already banned" : "Guest is already unbanned");
+        }
+
+        guest.setIsUserBanned(status);
+        guestRepo.save(guest);
+
+        return ResponseClass.responseSuccess(status ? "Guest banned" : "Guest unbanned");
+    }
 
     record GuestDTORecord(
             Long id,

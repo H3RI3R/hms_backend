@@ -127,12 +127,13 @@ public class GuestController {
         return guestService.getAllPhoneUnverifiedGuests(hotelId, email);
     }
 
-    @GetMapping("/banUnbanGuestById/{id}")
+    @PutMapping("/banUnbanGuestById/{id}")
     public ResponseEntity<?> banUnbanGuest(
             @RequestHeader("Authorization") String token,
+            @RequestParam boolean status,
             @PathVariable Long id){
         String hotelId = configClass.tokenValue(token, "hotelId");
-        return guestService.banGuest(hotelId, id);
+        return guestService.banGuest(hotelId, status , id);
     }
 
 }
