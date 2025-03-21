@@ -532,6 +532,7 @@ public class BookingService {
         bookingDetails.put("checkInDate", booking.getCheckInDate());
         bookingDetails.put("checkOutDate", booking.getCheckOutDate());
         bookingDetails.put("guestName", booking.getGuestName()); // Example field
+        bookingDetails.put("roomFare" ,booking.getRoomFare() );
         bookingDetails.put("rooms", bookedRooms);
 
         Map<String, Object> response = new HashMap<>();
