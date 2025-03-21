@@ -28,4 +28,6 @@ public interface PaymentRepo extends JpaRepository<PaymentClass,Long> {
     Page<PaymentClass> findByHotelIdAndPaymentStatusAndPaymentDateBetween(String hotelId, PaymentStatus status, LocalDateTime fromDate, LocalDateTime toDate, Pageable pageable);
 
     List<PaymentClass> findByTransactionNo(String transactionNo);
+
+    Page<PaymentClass> findByHotelIdAndBookingId(String hotelId, long bookingId, Pageable pageable);
 }

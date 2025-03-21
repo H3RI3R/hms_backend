@@ -22,15 +22,6 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-//    @PostMapping("/pay/{bookingId}")
-//    public ResponseEntity<?> offlinePayment(@PathVariable long bookingId,@RequestParam double amount){
-//        return paymentService.offlinePayment(bookingId,amount);
-//    }
-//
-//    @GetMapping("/getBookingDetails/{bookingId}")
-//    public ResponseEntity<?> getBookingDetails(@RequestHeader("Authorization") String token,@PathVariable long bookingId) {
-//        return paymentService.getBookingDetails(token,bookingId);
-//    }
     @GetMapping("/getPaymentDetailsByPaymentId/{paymentId}")
     public ResponseEntity<?> getPaymentDetailsByPaymentId(@RequestHeader("Authorization") String token ,
                                                           @PathVariable Long paymentId){
@@ -44,9 +35,10 @@ public class PaymentController {
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size ,
+            @RequestParam(value = "bookingId" ,required = false) long bookingId) {
 
-        return paymentService.getPayments(token, status, search, fromDate, toDate, page, size);
+        return paymentService.getPayments(token, status, search, fromDate, toDate, page, size ,bookingId);
     }
 
 

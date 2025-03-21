@@ -167,7 +167,7 @@ public class PaymentService {
 //    }
 
     //Get payments by status
-    public ResponseEntity<Map<String, Object>> getPayments(String token, PaymentStatus status, String search, String fromDate, String toDate, int page, int size) {
+    public ResponseEntity<Map<String, Object>> getPayments(String token, PaymentStatus status, String search, String fromDate, String toDate, int page, int size ,  Long bookingId) {
         String hotelId = configClass.tokenValue(token, "hotelId");
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<PaymentClass> paymentsPage;
@@ -186,7 +186,9 @@ public class PaymentService {
             toDateTime = parsedToDate.atTime(23, 59, 59);
         }
 
-        if (search != null && !search.isEmpty()) {
+        if (bookingId != null) {
+            paymentsPage = paymentRepo.findByHotelIdAndBookingId(hotelId, bookingId, pageable);
+        } else if  (search != null && !search.isEmpty()) {
             boolean isEmail = search.contains("@");
             paymentsPage = isEmail
                     ? paymentRepo.findByHotelIdAndUserEmailContaining(hotelId, search, pageable)

@@ -111,15 +111,12 @@ public class BookingService {
     }
 
 
-
-    public ResponseEntity<?> roomBook(String token, String bookingType,List<Integer> roomNumbers, LocalDateTime checkInDate, LocalDateTime checkOutDate, String guestName, String phone, String email, Integer adult, Integer children, String address, Double totalPaid) {
-        String hotelId =  configClass.tokenValue(token,"hotelId");
+    public ResponseEntity<?> roomBook(String token, String bookingType, List<Integer> roomNumbers, LocalDateTime checkInDate, LocalDateTime checkOutDate, String guestName, String phone, String email, Integer adult, Integer children, String address, Double totalPaid) {
+        String hotelId = configClass.tokenValue(token, "hotelId");
         String roleType = configClass.tokenValue(token, "roleType"); // Extracting ActionBy from token
         Hotel hotels = hotelRepo.findByStHotelId(hotelId);
-        if(hotels == null)
-        {
+        if (hotels == null) {
             return ResponseClass.responseFailure("hotel id is wrong");
-
         }
 
         Booking booking = new Booking();
@@ -130,7 +127,7 @@ public class BookingService {
             if (existingGuestBooking == null) {
                 return ResponseClass.responseFailure("Guest not found for the given email");
             }
-            Set<Guest> guests = guestRepo.findByEmailAndHotelId(email,hotelId);
+            Set<Guest> guests = guestRepo.findByEmailAndHotelId(email, hotelId);
             if (guests.isEmpty()) {
                 return ResponseClass.responseFailure("Guest not found for the given email");
             }
@@ -142,7 +139,7 @@ public class BookingService {
                 }
             }
             for (Guest existingGuest : guests) {
-                guest  = new Guest();
+                guest = new Guest();
                 guest.setFirstName(existingGuest.getFirstName());
                 guest.setEmail(existingGuest.getEmail());
                 guest.setHotelId(existingGuest.getHotelId());
@@ -238,19 +235,15 @@ public class BookingService {
             guestRepo.save(guest);
         }
 
-        //we need to add method to send the guest an email when ssuccessfully room booked and then add the email
-        //notification history so that Room booked also adds up in notification history .
+        bookingRepo.save(booking);
 
         String transactionNo = generateUniqueId();
-
-
         PaymentClass paymentClass = new PaymentClass();
 
         paymentClass.setBookingId(booking.getBookingId());
         List<PaymentClass> test =paymentRepo.findByTransactionNo(transactionNo);
         if(test==null){
             paymentClass.setTransactionNo(transactionNo);
-
         }
         paymentClass.setHotelId(hotelId);
         paymentClass.setBookingNo(bookingNo);
@@ -271,15 +264,14 @@ public class BookingService {
         }
         paymentClass.setPaymentStatus(PaymentStatus.PENDING);
         paymentRepo.save(paymentClass);
-        bookingRepo.save(booking);
         bookingActionService.saveBookingAction(booking.getBookingNo(), roleType, LocalDateTime.now());
         receivedPaymentsService.processPayment("paymentReceived", booking.getBookingNo(), guestName, email, totalPaid, roleType ,totalAmount,pendingAmount);
         return ResponseClass.responseSuccess("booking created successfully");
 
     }
-//    public static String isUnqiue(String transactionNo){
-//
-//    }
+
+
+
     public static String generateUniqueId() {
         Random random = new Random();
         int randomNumber = 100000 + random.nextInt(900000); // Generates a 6-digit number (100000 - 999999)
