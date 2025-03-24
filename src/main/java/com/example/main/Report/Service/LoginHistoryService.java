@@ -24,7 +24,6 @@ public class LoginHistoryService {
         LocalDateTime fromDateTime = null;
         LocalDateTime toDateTime = null;
 
-        // Convert date strings to LocalDateTime
         if (fromDate != null && !fromDate.isEmpty()) {
             fromDateTime = LocalDate.parse(fromDate, formatter).atStartOfDay();
         }
@@ -32,14 +31,16 @@ public class LoginHistoryService {
             toDateTime = LocalDate.parse(toDate, formatter).atTime(23, 59, 59);
         }
 
-        // Handle case where only one date is provided
-        if (fromDateTime != null && toDateTime == null) {
-            toDateTime = LocalDateTime.now(); // Default to the current date
-        } else if (toDateTime != null && fromDateTime == null) {
-            fromDateTime = LocalDate.of(2000, 1, 1).atStartOfDay(); // Default to a very old date
+        if (fromDateTime != null && toDateTime != null && toDateTime.isBefore(fromDateTime)) {
+            return ResponseClass.responseFailure("Invalid date range: 'toDate' cannot be earlier than 'fromDate'.");
         }
 
-        // If searching by email, ignore date filters
+        if (fromDateTime != null && toDateTime == null) {
+            toDateTime = LocalDateTime.now();
+        } else if (toDateTime != null && fromDateTime == null) {
+            fromDateTime = LocalDate.of(2000, 1, 1).atStartOfDay();
+        }
+
         if (email != null && !email.isEmpty()) {
             loginRecords = loginHistoryRepo.findByEmail(email);
             if (loginRecords.isEmpty()) {
@@ -48,7 +49,6 @@ public class LoginHistoryService {
             return ResponseClass.responseSuccess("Login details for user success", "loginModal", loginRecords);
         }
 
-        // If both fromDate and toDate are provided, filter by date range
         if (fromDateTime != null && toDateTime != null) {
             loginRecords = loginHistoryRepo.findByLoginAtBetween(fromDateTime, toDateTime);
         } else {
