@@ -14,10 +14,11 @@ public class LoginHistoryController {
     @Autowired
     private LoginHistoryService loginHistoryService;
     @GetMapping("/getAll")
-
-    public ResponseEntity<?> getLoginHistory(@RequestHeader("Authorization") String token,
-                                             @RequestParam(value = "search",required = false) String email){
-        return loginHistoryService.getLoginHistory(email);
-
+    public ResponseEntity<?> getLoginHistory(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(value = "search", required = false) String email,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        return loginHistoryService.getLoginHistory(email, fromDate, toDate);
     }
 }
