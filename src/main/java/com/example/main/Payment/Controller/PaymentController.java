@@ -36,7 +36,7 @@ public class PaymentController {
             @RequestParam(value = "toDate", required = false) String toDate,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size ,
-            @RequestParam(value = "bookingId" ,required = false) long bookingId) {
+            @RequestParam(value = "bookingId" ,required = false) Long bookingId) {
 
         return paymentService.getPayments(token, status, search, fromDate, toDate, page, size ,bookingId);
     }
