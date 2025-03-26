@@ -72,7 +72,7 @@ public class ReceivedPaymentsService {
         }
 
         if (page != null && size != null) {
-            pageable = PageRequest.of(page, size, Sort.by("paymentDate").descending());
+            pageable = PageRequest.of(page, size, Sort.by("date").descending());
         }
 
         if (searchkey != null && !searchkey.trim().isEmpty()) {
