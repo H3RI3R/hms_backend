@@ -13,8 +13,11 @@ public class ReceivedPaymentsController {
 
     @GetMapping("/getAllPayments")
     public ResponseEntity<?> getAllPayments(@RequestHeader("Authorization") String token,
-                                            @RequestParam(value = "search" ,required = false)String email
-    ) {
-        return receivedPaymentsService.getAllPayments(email);
+                                            @RequestParam(value = "search", required = false) String searchkey,
+                                            @RequestParam(value = "fromDate", required = false) String startDate,
+                                            @RequestParam(value = "toDate", required = false) String endDate,
+                                            @RequestParam(value = "page" , required = false)Integer page,
+                                            @RequestParam(value = "size" , required = false)Integer size ) {
+        return receivedPaymentsService.getAllPayments(searchkey, startDate, endDate , page,size);
     }
 }
