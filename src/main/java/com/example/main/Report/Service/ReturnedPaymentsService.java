@@ -31,15 +31,19 @@ public class ReturnedPaymentsService {
         return ResponseClass.responseSuccess("Returned payment added successfully", "payment", payment);
     }
     public ResponseEntity<?> getAllReturnedPayments(String email) {
-        if (email != null) {
-            List<BookingPayments> returnedPayments = bookingPaymentsRepo.findByPaymentTypeAndUserEmail("paymentReturned", email);
-            if (returnedPayments == null || returnedPayments.isEmpty()) {
-                return ResponseClass.responseFailure("No returned payment found for user " + email);
+        List<BookingPayments> returnedPayments;
+
+        if (email != null && !email.trim().isEmpty()) {
+            returnedPayments = bookingPaymentsRepo.findByPaymentTypeAndUserEmail("paymentReturned", email);
+            if (returnedPayments.isEmpty()) {
+                return ResponseClass.responseFailure("No returned payments found for user " + email);
             }
             return ResponseClass.responseSuccess("Returned payments for user retrieved successfully", "returnedPayments", returnedPayments);
         }
-        List<BookingPayments> returnedPayments = bookingPaymentsRepo.findByPaymentType("paymentReturned");
-        if (returnedPayments == null || returnedPayments.isEmpty()) {
+
+        returnedPayments = bookingPaymentsRepo.findByPaymentType("paymentReturned");
+
+        if (returnedPayments.isEmpty()) {
             return ResponseClass.responseFailure("No returned payments found");
         }
         return ResponseClass.responseSuccess("Returned payments retrieved successfully", "returnedPayments", returnedPayments);
