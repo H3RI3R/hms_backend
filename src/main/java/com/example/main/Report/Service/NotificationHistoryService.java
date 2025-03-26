@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,11 @@ public class NotificationHistoryService {
     private NotificationHistoryRepository notificationHistoryRepository;
     public ResponseEntity<Map<String, Object>> getAllNotifications(
             String searchKey, String fromDate, String toDate, Integer page, Integer size) {
+
+        if ((fromDate != null && fromDate.isEmpty()) || (toDate != null && toDate.isEmpty())) {
+            fromDate = null;
+            toDate = null;
+        }
 
         if ((fromDate != null && toDate == null) || (toDate != null && fromDate == null)) {
             return ResponseClass.responseFailure("Both fromDate and toDate must be provided together.");
@@ -57,13 +63,17 @@ public class NotificationHistoryService {
                 return ResponseClass.responseFailure("Invalid email format: " + searchKey);
             }
         } else if (fromDate != null && toDate != null) {
-            LocalDateTime start = parseDateTime(fromDate);
-            LocalDateTime end = parseDateTime(toDate);
-            if (pageable != null) {
-                pagedResult = notificationHistoryRepository.findByDateTimeBetween(start, end, pageable);
-                notifications = pagedResult.getContent();
-            } else {
-                notifications = notificationHistoryRepository.findByDateTimeBetween(start, end);
+            try {
+                LocalDateTime start = LocalDateTime.parse(fromDate + "T00:00:00");
+                LocalDateTime end = LocalDateTime.parse(toDate + "T23:59:59");
+                if (pageable != null) {
+                    pagedResult = notificationHistoryRepository.findByDateTimeBetween(start, end, pageable);
+                    notifications = pagedResult.getContent();
+                } else {
+                    notifications = notificationHistoryRepository.findByDateTimeBetween(start, end);
+                }
+            } catch (DateTimeParseException e) {
+                return ResponseClass.responseFailure("Invalid date format. Use yyyy-MM-dd.");
             }
         } else {
             if (pageable != null) {
