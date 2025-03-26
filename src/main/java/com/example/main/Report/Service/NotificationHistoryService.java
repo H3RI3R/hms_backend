@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class NotificationHistoryService {
@@ -17,20 +19,34 @@ public class NotificationHistoryService {
 
     @Autowired
     private NotificationHistoryRepository notificationHistoryRepository;
+    public ResponseEntity<Map<String, Object>> getAllNotifications(String searchKey) {
+        if (searchKey == null || searchKey.trim().isEmpty()) {
+            List<NotificationHistory> notifications = notificationHistoryRepository.findAll();
+            if (notifications.isEmpty()) {
+                return ResponseClass.responseFailure("No notifications found");
+            }
+            return ResponseClass.responseSuccess("Notifications fetched successfully", "notifications", notifications);
+        }
 
-    public ResponseEntity<Map<String, Object>> getAllNotifications(String email) {
-        if(email!=null){
-            List<NotificationHistory> notifications = notificationHistoryRepository.findByUserEmail(email);
-            if(notifications.isEmpty()){
-                return ResponseClass.responseFailure("No notification found for this user "+email);
+        if (isValidEmail(searchKey)) {
+            List<NotificationHistory> notifications = notificationHistoryRepository.findByUserEmail(searchKey);
+            if (notifications.isEmpty()) {
+                return ResponseClass.responseFailure("No notifications found for this user: " + searchKey);
             }
             return ResponseClass.responseSuccess("Notifications for user fetched successfully", "notifications", notifications);
-        } List<NotificationHistory> notifications = notificationHistoryRepository.findAll();
-
-        if (notifications.isEmpty()) {
-            return ResponseClass.responseFailure("No notifications found");
+        } else {
+            return ResponseClass.responseFailure("Invalid email format: " + searchKey);
         }
-        return ResponseClass.responseSuccess("Notifications fetched successfully", "notifications", notifications);
+    }
+
+    private boolean isValidEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 
