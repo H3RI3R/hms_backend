@@ -85,7 +85,7 @@ public class NotificationHistoryService {
         }
 
         if (notifications.isEmpty()) {
-            return ResponseClass.responseFailure("No notifications found");
+            return ResponseClass.responseFailure("No notifications found","notification" , notifications);
         }
 
         Map<String, Object> response = new HashMap<>();

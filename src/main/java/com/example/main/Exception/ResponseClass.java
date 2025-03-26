@@ -32,6 +32,14 @@ public class ResponseClass {
         return ResponseEntity.ok(successResponse);
     }
 
+    public static ResponseEntity<Map<String, Object>> responseFailure(String message,String inputType, Object inputdata) {
+        Map<String, Object> successResponse = new HashMap<>();
+        successResponse.put("status", "failure");
+        successResponse.put("message", message);
+        successResponse.put(inputType, inputdata);
+        return ResponseEntity.ok(successResponse);
+    }
+
     public static ResponseEntity<Map<String, Object>> internalServer(String message) {
         Map<String, Object> successResponse = new HashMap<>();
         successResponse.put("error", message);
