@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -364,11 +365,13 @@ public class RoomTypesService {
         roomTypes.setChildren(children);
         roomTypes.setCancelFee(cancelFee);
         roomTypes.setFacilities(facilities);
-//        for(MultipartFile file:roomTypeImage)
-//        {
-//            roomTypes.setRoomTypeImage(file.getOriginalFilename());
-//        }
-//        roomTypes.setRoomTypeImage(roomTypeImage);
+        List<String> imageNames = new ArrayList<>();
+        if (roomTypeImage != null) {
+            for (MultipartFile file : roomTypeImage) {
+                imageNames.add(file.getOriginalFilename());
+            }
+        }
+        roomTypes.setRoomTypeImage(imageNames.toArray(new String[0]));
         roomTypes.setRoomTypeStatus(roomTypeStatus);
         roomTypes.setFeatureStatus(featureStatus);
         roomTypes.setRoomDescription(roomDescription);
