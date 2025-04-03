@@ -61,6 +61,7 @@ public class AdminService {
                 adminLogin.setEmail(adminEmail);
                 adminLogin.setPassword(adminPassword);
                 adminLogin.setPassword(passwordEncoder.encode(adminPassword));
+                adminLogin.setUserName(adminName);
                 adminLogin.setHotelId(superAdminId);
                 loginRepo.save(adminLogin);
                 return ResponseClass.responseSuccess("super admin created successfully");

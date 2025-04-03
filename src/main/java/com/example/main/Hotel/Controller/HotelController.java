@@ -40,7 +40,7 @@ public class HotelController {
                                          @RequestParam(required = false) String hotelName,
                                          @RequestParam(required = false) String subTitle,
                                          @RequestParam(required = false) String destination,
-                                         @RequestParam(required = false) boolean status,
+                                         @RequestParam(required = false) Boolean status,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDate registerDate,
                                          @RequestParam(required = false) String hotelClass,
                                          @RequestParam(required = false) String phoneNo,

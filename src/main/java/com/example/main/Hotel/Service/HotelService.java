@@ -140,17 +140,18 @@ public class HotelService {
         return ResponseClass.responseSuccess("Hotel added successfully");
     }
 
-    public ResponseEntity<?> updateHotel(long hotelId, String hotelName, String subTitle, String destination, boolean status, LocalDate registerDate, String hotelClass, String phoneNo, String address, String hotelEmail, String description, MultipartFile[] hotelImage) {
+    public ResponseEntity<?> updateHotel(long hotelId, String hotelName, String subTitle, String destination, Boolean status, LocalDate registerDate, String hotelClass, String phoneNo, String address, String hotelEmail, String description, MultipartFile[] hotelImage) {
 
         Hotel hotel = hotelsRepo.findByHotelId(hotelId);
         if (hotel == null) {
             return ResponseClass.responseFailure("hotel not found");
         }
         // Update hotel details if provided
-        if (hotelName != null) hotel.setHotelName(hotelName);
+
+        if (hotelName != null && !hotelName.isEmpty()) hotel.setHotelName(hotelName);
         if (subTitle != null) hotel.setSubTitle(subTitle);
         if (destination != null) hotel.setDestination(destination);
-        if (status) hotel.setStatus(status);
+        if (status != null) hotel.setStatus(status);
         if (registerDate != null) hotel.setHotelDate(registerDate);
         if (hotelClass != null) hotel.setHotelClass(hotelClass);
         if (phoneNo != null) hotel.setPhoneNo(phoneNo);

@@ -416,7 +416,17 @@ public class BookingService {
 
     public ResponseEntity<?> addPremiumBooking(String token, LocalDate date, int roomNo, List<PremiumDTO> premiumServiceList) {
         String hotelId = configClass.tokenValue(token, "hotelId");
-        Booking booking = bookingRepo.findByRoomNoAndBookingStatus(roomNo, true);
+//        Booking booking =null;
+//        try{
+//             booking = bookingRepo.findByRoomNoAndBookingStatus(roomNo, true);
+//
+//        }
+//        catch (Exception e){
+//            System.out.println("no booking found");
+//        }
+//
+//        System.out.println("this is the booking detail" + booking);
+        Booking booking = this.bookingRepo.findByRoomNoAndBookingStatus(roomNo, true);
         if (booking == null) {
             return ResponseClass.responseFailure("Booking not found");
         }

@@ -15,6 +15,8 @@ import java.util.List;
 public interface PaymentRepo extends JpaRepository<PaymentClass,Long> {
     PaymentClass findByBookingNo(String bookingNo);
 
+    List<PaymentClass>findAllByHotelId(String hotelId);
+
     Page<PaymentClass> findByHotelId(String hotelId, Pageable pageable);
 
     Page<PaymentClass> findByHotelIdAndPaymentStatus(String hotelId, PaymentStatus status, Pageable pageable);
